@@ -9,7 +9,7 @@ ekraan = pygame.display.set_mode((EKRAANI_LAIUS, EKRAANI_KÕRGUS), pygame.RESIZA
 pygame.display.set_caption("Baar2")
 
 # Värvid ja muud konstandid. lähevad muutmisele.
-TAUSTA_VÄRV = (45, 45, 45)
+TAUSTA_VÄRV = ('sienna')
 KAADRIKIIRUS = 60
 
 # Mängu olek. ei ole nähtav hetkel.
@@ -37,7 +37,7 @@ def kuva_mäng_läbi():
     suur_font = pygame.font.Font(None, 64)
     väike_font = pygame.font.Font(None, 36)
     sõnum_tekst = suur_font.render("Mäng läbi!", True, (255, 0, 0))
-    välju_tekst = väike_font.render("Lahku mängust (Q)", True, (255, 255, 255))
+    välju_tekst = väike_font.render("Lahku mängust (Q)", True, ('red'))
 
     ekraan.blit(sõnum_tekst, (EKRAANI_LAIUS // 2 - sõnum_tekst.get_width() // 2, EKRAANI_KÕRGUS // 3))
     ekraan.blit(välju_tekst, (EKRAANI_LAIUS // 2 - välju_tekst.get_width() // 2, EKRAANI_KÕRGUS // 2 + 50))
