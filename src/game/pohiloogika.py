@@ -6,7 +6,7 @@ pygame.init()
 
 # Ekraani suurus ja tausta värv
 ekraani_laius, ekraani_kõrgus = 800, 600
-ekraan = pygame.display.set_mode((ekraani_laius, ekraani_kõrgus))
+ekraan = pygame.display.set_mode((ekraani_laius, ekraani_kõrgus), pygame.RESIZABLE)
 pygame.display.set_caption("Baar2")
 tausta_värv = ('sienna')
 
