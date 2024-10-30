@@ -8,11 +8,11 @@ EKRAANI_LAIUS, EKRAANI_KÕRGUS = 800, 800
 ekraan = pygame.display.set_mode((EKRAANI_LAIUS, EKRAANI_KÕRGUS), pygame.RESIZABLE)
 pygame.display.set_caption("Baar2")
 
-# Värvid ja muud konstandid
+# Värvid ja muud konstandid. lähevad muutmisele.
 TAUSTA_VÄRV = (45, 45, 45)
 KAADRIKIIRUS = 60
 
-# Mängu olek
+# Mängu olek. ei ole nähtav hetkel.
 kell = pygame.time.Clock()
 mäng_pausil = False
 
@@ -28,7 +28,7 @@ def pane_pausile():
     mäng_pausil = not mäng_pausil
 
 def kuva_mäng_läbi():
-    """Kuvab mängu lõpetamise sõnumi ja ootab mängija sisendit."""
+    """Kuvab mängu lõpetamise sõnumi ja ootab mängija sisendit. Kuvatav tekst uuel kihil."""
     kiht = pygame.Surface((EKRAANI_LAIUS, EKRAANI_KÕRGUS))
     kiht.set_alpha(200)
     kiht.fill((0, 0, 0))
