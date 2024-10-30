@@ -28,7 +28,7 @@ def pane_pausile():
     mäng_pausil = not mäng_pausil
 
 def kuva_mäng_läbi():
-    """Kuvab mängu lõpetamise sõnumi ja ootab mängija sisendit."""
+    """Kuvab mängu lõpetamise sõnumi ja ootab mängija sisendit. Kuvatav tekst uuel kihil."""
     kiht = pygame.Surface((EKRAANI_LAIUS, EKRAANI_KÕRGUS))
     kiht.set_alpha(200)
     kiht.fill((0, 0, 0))
