@@ -36,8 +36,8 @@ def kuva_mäng_läbi():
 
     suur_font = pygame.font.Font(None, 64)
     väike_font = pygame.font.Font(None, 36)
-    sõnum_tekst = suur_font.render("Mäng läbi!", True, (255, 0, 0))
-    välju_tekst = väike_font.render("Lahku mängust (Q)", True, ('red'))
+    sõnum_tekst = suur_font.render("Mäng läbi!", True, ('red'))
+    välju_tekst = väike_font.render("Lahku mängust (Q)", True, ('white'))
 
     ekraan.blit(sõnum_tekst, (EKRAANI_LAIUS // 2 - sõnum_tekst.get_width() // 2, EKRAANI_KÕRGUS // 3))
     ekraan.blit(välju_tekst, (EKRAANI_LAIUS // 2 - välju_tekst.get_width() // 2, EKRAANI_KÕRGUS // 2 + 50))
