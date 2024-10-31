@@ -46,7 +46,7 @@ while True:
             elif event.key == pygame.K_p:
                 if running:
                     paused = not paused  # Pausile või pausilt tagasi
-            elif event.key == pygame.K_ESCAPE:  # ESC klahviga sulgemine
+            elif event.key == pygame.K_ESCAPE or pygame.K_q:  # ESC ja q klahviga sulgemine
                 pygame.quit()
                 sys.exit()
     #kui mäng ei ole käimas
