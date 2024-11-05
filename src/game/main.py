@@ -34,6 +34,10 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 30)
 score = 0
 
+game = Game()
+game.screen = screen
+game.start_game()
+
 # Mängija pildi tee ja pildi laadimine
 base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 character_image_path = os.path.join(base_path, "assets", "designs", "character", "teenindus.mees2.png")
@@ -53,6 +57,7 @@ glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types
 
 # Põhitsükkel
 running = True
+score = 0
 game_timer = GameTimer()
 while running:
     if game_timer.is_time_up():
@@ -63,11 +68,16 @@ while running:
     # Sündmused
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            game.quit_game()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:  # Pausile minek või pausilt naasmine
                 game_timer.toggle_pause()
+                game.toggle_pause()
+            elif event.key == pygame.K_q:
+                game.quit_game()
+            elif event.key == pygame.K_c and game.is_paused:
+                game_timer.toggle_pause()
+                game.toggle_pause()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             for glass in glasses[:]:
                 picked_up, score = glass.check_pickup(player, score)
