@@ -24,6 +24,8 @@ from progress_bar import GameTimer
 from object import Glass, Table
 from ui import draw_score, draw_time
 from pohiloogika import Game
+from main_menu import MainMenu
+from scene import Scene
 
 # Algseaded
 pygame.init()
@@ -37,6 +39,8 @@ score = 0
 game = Game()
 game.screen = screen
 game.start_game()
+
+current_scene: Scene
 
 # Mängija pildi tee ja pildi laadimine
 base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -54,6 +58,10 @@ all_sprites = pygame.sprite.Group(player, enemy)
 tables = [Table(x, y) for x, y in PRESET_TABLE_POSITIONS]  # Lauad kindlates positsioonides
 glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
 glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types)["color"], random.choice(glass_types)["points"]) for table in tables]
+
+def screen_switcher(new_scene: Scene):
+    global current_scene
+    current_scene = new_scene
 
 # Põhitsükkel
 running = True
