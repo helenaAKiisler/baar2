@@ -1,7 +1,7 @@
 import pygame
 import sys
 from settings import DARK_BROWN
-
+clock = pygame.time.Clock()
 
 class Game:
     def __init__(self):
@@ -96,4 +96,4 @@ if __name__ == "__main__":
     game = Game()
     game.run()
     pygame.display.flip()
-    kell.tick(30)  # 30 FPS
+    clock.tick(30)  # 30 FPS

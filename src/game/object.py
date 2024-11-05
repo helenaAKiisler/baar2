@@ -11,7 +11,10 @@ class Glass:
         pygame.draw.rect(screen, self.color, self.rect)
 
     def check_pickup(self, player, score):
-        if self.rect.colliderect(player.rect):
+        #laiendan klaasi üleskorjamis/kokkupõrke ala esmalt
+        pickup_area = self.rect.inflate(40, 40)
+
+        if pickup_area.colliderect(player.rect):
             score += self.points
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
