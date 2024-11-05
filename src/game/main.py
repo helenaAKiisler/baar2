@@ -23,6 +23,7 @@ from enemy import Enemy
 from progress_bar import GameTimer
 from object import Glass, Table
 from ui import draw_score, draw_time
+from pohiloogika import Game
 
 # Algseaded
 pygame.init()

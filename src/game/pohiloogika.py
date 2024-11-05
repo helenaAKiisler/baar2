@@ -1,5 +1,6 @@
 import pygame
 import sys
+from settings import DARK_BROWN
 
 
 class Game:
@@ -15,7 +16,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.is_paused = False
-        self.bg_color = 'sienna'
+        self.bg_color = DARK_BROWN
 
     def start_game(self):
         """Käivitab mängu."""
