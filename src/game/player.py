@@ -19,7 +19,7 @@ running = True
 
 BLACK = (0, 0, 0)
 
-character_image_path = os.path.join("..", "..", "assets", "designs", "character", "player1.png")
+character_image_path = os.path.join("..", "..", "assets", "designs", "character", "teenindus.mees2.png")
 player_image = pygame.image.load(character_image_path)
 
 class Enemy(pygame.sprite.Sprite):
