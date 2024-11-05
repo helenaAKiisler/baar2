@@ -9,9 +9,9 @@ import sys
 
 pygame.init()
 vec = pygame.math.Vector2
-WIDTH = 800
-HEIGHT = 600
-screen = pygame.display.set_mode((800, 600))
+WIDTH = 1600
+HEIGHT = 900
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 60
 FramePerSec = pygame.time.Clock()
 
@@ -19,7 +19,7 @@ running = True
 
 BLACK = (0, 0, 0)
 
-character_image_path = os.path.join("..", "..", "assets", "designs", "character", "teenindus.mees2.png")
+character_image_path = os.path.join("..", "..", "assets", "designs", "character", "teenindaja.mees3.png")
 player_image = pygame.image.load(character_image_path)
 
 class Enemy(pygame.sprite.Sprite):
@@ -33,9 +33,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def move(self):
         self.rect.move_ip(0,10)
-        if (self.rect.bottom > 600):
+        if (self.rect.bottom > 900):
             self.rect.top = 0
-            self.rect.center = (random.randint(30, 370), 0)
+            self.rect.center = (random.randint(30, 1370), 0)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
