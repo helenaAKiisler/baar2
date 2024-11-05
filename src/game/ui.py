@@ -1,6 +1,20 @@
 #siia tulevad erinevad nupud vms
 import pygame
-from settings import WHITE
+from settings import WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
+from typing import Callable
+
+TEXT_COLOR = pygame.Color(LIGHT_GREEN)
+
+BUTTON_TEXT_COLOR = pygame.Color(DARK_GREEN)
+BUTTON_COLOR = pygame.Color(LIGHT_GREEN)
+BUTTON_HOVER_COLOR = pygame.Color(GREEN)
+BUTTON_PADDING = 15
+
+FONT: pygame.font.Font
+
+def initialize_font():
+    global FONT
+    FONT = pygame.font.Font("assets/font/Inknut-Antiqua")
 
 def draw_score(screen, font, score):
     score_text = font.render(f"Punktid: {score}", True, WHITE)

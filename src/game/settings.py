@@ -10,8 +10,11 @@ DARK_BROWN = (101, 67, 33)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 GRAY = (169, 169, 169)  # Laudade värv
-GREEN = (0, 255, 0)
+GREEN = (130, 218, 112)
 BLACK = (0, 0, 0)
+DARK_GRAY = (99, 102, 106)
+DARK_GREEN = (16, 72, 36)
+LIGHT_GREEN = (91, 139, 102)
 
 # Mängija seaded
 PLAYER_SIZE = 50
