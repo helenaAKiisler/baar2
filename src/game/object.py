@@ -1,5 +1,5 @@
 import pygame
-from settings import GLASS_SIZE, TABLE_SIZE
+from settings import GLASS_SIZE, TABLE_SIZE, GRAY
 
 class Glass:
     def __init__(self, x, y, color, points):
@@ -22,4 +22,4 @@ class Table:
         self.rect = pygame.Rect(x, y, TABLE_SIZE, TABLE_SIZE)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, HALL, self.rect)
+        pygame.draw.rect(screen, GRAY, self.rect)

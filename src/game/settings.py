@@ -6,11 +6,12 @@ FPS = 60
 GAME_DURATION = 60  # Mäng kestab 60 sekundit
 
 # Värvid
-TUME_PRUUN = (101, 67, 33)
-SININE = (0, 0, 255)
-VALGE = (255, 255, 255)
-HALL = (169, 169, 169)  # Laudade värv
-ROHELINE = (0, 255, 0)
+DARK_BROWN = (101, 67, 33)
+BLUE = (0, 0, 255)
+WHITE = (255, 255, 255)
+GRAY = (169, 169, 169)  # Laudade värv
+GREEN = (0, 255, 0)
+BLACK = (0, 0, 0)
 
 # Mängija seaded
 PLAYER_SIZE = 50

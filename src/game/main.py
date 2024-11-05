@@ -15,42 +15,44 @@
 ##################################################
 import pygame
 import sys
-from pohiloogika import Game
-from settings import *
+import os.path
+import random
+from settings import WIDTH, HEIGHT, FPS, DARK_BROWN, GRAY, WHITE,  PRESET_TABLE_POSITIONS
 from player import Player
-from object import Table
-from object import Glass
+from enemy import Enemy
+from progress_bar import GameTimer
+from object import Glass, Table
 from ui import draw_score, draw_time
-from game_timer import GameTimer
 
+# Algseaded
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
+
 font = pygame.font.SysFont("Arial", 30)
-
-# Mängu alustamine
 score = 0
-running = True
 
-# Loome mängija, lauad ja klaasid
-player = Player(WIDTH // 2, HEIGHT - PLAYER_SIZE - 40)
-tables = [Table(x, y) for x, y in PRESET_TABLE_POSITIONS]
-glasses = []
-glass_types = [
-    {"color": (255, 255, 0), "points": 1},
-    {"color": (255, 20, 147), "points": 2},
-    {"color": (255, 69, 0), "points": 3}
-]
+# Mängija pildi tee ja pildi laadimine
+base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+character_image_path = os.path.join(base_path, "assets", "designs", "character", "teenindus.mees2.png")
+player_image = pygame.image.load(character_image_path)
 
-for table in tables:
-    glass_type = random.choice(glass_types)
-    glasses.append(Glass(table.rect.x + 15, table.rect.y + 15, glass_type["color"], glass_type["points"]))
+# Objektide loomine
+player = Player(WIDTH // 2, HEIGHT - 80, player_image)
+enemy = Enemy()
 
-# Initsialiseerime taimeri
-game_timer = GameTimer()
+# Spraitide gruppide loomine
+enemies = pygame.sprite.Group(enemy)
+all_sprites = pygame.sprite.Group(player, enemy)
+
+tables = [Table(x, y) for x, y in PRESET_TABLE_POSITIONS]  # Lauad kindlates positsioonides
+glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
+glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types)["color"], random.choice(glass_types)["points"]) for table in tables]
 
 # Põhitsükkel
+running = True
+game_timer = GameTimer()
 while running:
     if game_timer.is_time_up():
         print("Mängu aeg on läbi! Skoor:", score)
@@ -77,7 +79,7 @@ while running:
         player.handle_movement(keys, tables)
 
     # Ekraani uuendamine ja progressiriba joonistamine
-    screen.fill(TUME_PRUUN)
+    screen.fill(DARK_BROWN)
     player.draw(screen)
     for table in tables:
         table.draw(screen)
@@ -88,7 +90,7 @@ while running:
 
     # Kuvame kas järelejäänud aja või pausiteate
     if game_timer.paused:
-        pause_text = font.render("Pausil", True, VALGE)
+        pause_text = font.render("Pausil", True, WHITE)
         screen.blit(pause_text, (WIDTH // 2 - 40, HEIGHT // 2))
     else:
         draw_time(screen, font, game_timer.get_time_left())
