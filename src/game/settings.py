@@ -10,6 +10,7 @@ TUME_PRUUN = (101, 67, 33)
 SININE = (0, 0, 255)
 VALGE = (255, 255, 255)
 HALL = (169, 169, 169)  # Laudade värv
+ROHELINE = (0, 255, 0)
 
 # Mängija seaded
 PLAYER_SIZE = 50

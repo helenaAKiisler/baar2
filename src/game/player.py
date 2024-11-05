@@ -5,13 +5,14 @@ from pygame.locals import *
 import random, time
 import sys
 
+
 #from src.game.main import WIDTH, HEIGHT
 
 pygame.init()
 vec = pygame.math.Vector2
 WIDTH = 800
 HEIGHT = 600
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((900, 700))
 FPS = 60
 FramePerSec = pygame.time.Clock()
 
