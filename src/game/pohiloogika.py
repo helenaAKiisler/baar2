@@ -1,79 +1,99 @@
 import pygame
 import sys
+from settings import DARK_BROWN
+clock = pygame.time.Clock()
 
-# Pygame'i algväärtustamine
-pygame.init()
+class Game:
+    def __init__(self):
+        pygame.init()
 
-# Ekraani suurus ja tausta värv
-ekraani_laius, ekraani_kõrgus = 800, 600
-ekraan = pygame.display.set_mode((ekraani_laius, ekraani_kõrgus), pygame.RESIZABLE)
-pygame.display.set_caption("Baar2")
-tausta_värv = ('sienna')
+        # Ekraani seaded
+        self.screen_width, self.screen_height = 800, 600
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.RESIZABLE)
+        pygame.display.set_caption("Baar2")
 
-# Mängu muutujad
-kell = pygame.time.Clock()
-mäng_käib = False  # Kontrollib, kas mäng on käima pandud
-mäng_pausil = False  # Kontrollib, kas mäng on pausil
+        # Mängu muutujad
+        self.clock = pygame.time.Clock()
+        self.is_running = False
+        self.is_paused = False
+        self.bg_color = DARK_BROWN
 
-def alusta_mäng():
-    """Käivitab mängu."""
-    global mäng_käib, mäng_pausil
-    mäng_käib = True
-    mäng_pausil = False
+    def start_game(self):
+        """Käivitab mängu."""
+        self.is_running = True
+        self.is_paused = False
 
-def pane_pausile():
-    """Lülitab mängu pausile ja pausilt tagasi."""
-    global mäng_pausil
-    if mäng_käib:  # Ainult juhul, kui mäng käib
-        mäng_pausil = not mäng_pausil
+    def toggle_pause(self):
+        """Lülitab mängu pausile ja pausilt tagasi."""
+        if self.is_running:
+            self.is_paused = not self.is_paused
 
-def lõpeta_mäng():
-    """Lõpetab mängu ja sulgeb programmi."""
-    pygame.quit()
-    sys.exit()
+    def quit_game(self):
+        """Lõpetab mängu ja sulgeb programmi."""
+        pygame.quit()
+        sys.exit()
 
-def kuva_pausi_tekst():
-    """Kuvab pausiteate ekraanile."""
-    font = pygame.font.Font(None, 48)
-    pausitekst = font.render("Mäng on pausil. Jätkamiseks vajuta 'C'", True, ('white'))
-    ekraan.blit(pausitekst, (ekraani_laius // 2 - pausitekst.get_width() // 2, ekraani_kõrgus // 2 - pausitekst.get_height() // 2))
+    def display_pause_text(self):
+        """Kuvab pausiteate ekraanile."""
+        font = pygame.font.Font(None, 48)
+        pause_text = font.render("Mäng on pausil. Jätkamiseks vajuta 'C'", True, 'white')
+        self.screen.blit(pause_text, (
+        self.screen_width // 2 - pause_text.get_width() // 2, self.screen_height // 2 - pause_text.get_height() // 2))
 
-def kuva_algus_tekst():
-    """Kuvab mängu alguse ja juhiste teksti ekraanile."""
-    font = pygame.font.Font(None, 48)
-    alusta_teksti = font.render("Mängu alustamiseks vajuta 'A'", True, ('white'))
-    ekraan.blit(alusta_teksti, (ekraani_laius // 2 - alusta_teksti.get_width() // 2, ekraani_kõrgus // 2 - alusta_teksti.get_height() // 2))
+    def display_start_text(self):
+        """Kuvab mängu alguse ja juhiste teksti ekraanile."""
+        font = pygame.font.Font(None, 48)
+        start_text = font.render("Mängu alustamiseks vajuta 'A'", True, 'white')
+        self.screen.blit(start_text, (
+        self.screen_width // 2 - start_text.get_width() // 2, self.screen_height // 2 - start_text.get_height() // 2))
 
-# Mängu tsükkel
-while True:
-    # Ürituste kontroll
-    for sündmus in pygame.event.get():
-        if sündmus.type == pygame.QUIT:
-            lõpeta_mäng()
-        elif sündmus.type == pygame.KEYDOWN:
-            if sündmus.key == pygame.K_a:  # Kui vajutatakse 'A', käivitatakse mäng
-                alusta_mäng()
-            elif sündmus.key == pygame.K_p:  # Kui vajutatakse 'P', lülitatakse paus sisse või välja
-                pane_pausile()
-            elif sündmus.key == pygame.K_q:  # 'Q' lõpetamiseks
-                lõpeta_mäng()
-            elif sündmus.key == pygame.K_c and mäng_pausil:  # 'C' jätkamiseks, kui mäng on pausil
-                pane_pausile()
+    def display_game_text(self):
+        """Kuvab mängu käigus kuvatava teksti."""
+        font = pygame.font.Font(None, 36)
+        game_text = font.render("Mäng töötab...", True, 'white')
+        self.screen.blit(game_text, (self.screen_width // 2 - game_text.get_width() // 2, self.screen_height // 2))
 
-    # Tausta värvimine
-    ekraan.fill(tausta_värv)
+    def handle_events(self):
+        """Käsitleb kasutaja sisendit ja sündmusi."""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit_game()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:  # Kui vajutatakse 'A', käivitatakse mäng
+                    self.start_game()
+                elif event.key == pygame.K_p:  # Kui vajutatakse 'P', lülitatakse paus sisse või välja
+                    self.toggle_pause()
+                elif event.key == pygame.K_q:  # 'Q' lõpetamiseks
+                    self.quit_game()
+                elif event.key == pygame.K_c and self.is_paused:  # 'C' jätkamiseks, kui mäng on pausil
+                    self.toggle_pause()
 
-    # Kontroll, kas mäng on käivitatud ja pausil
-    if mäng_käib:
-        if mäng_pausil:
-            kuva_pausi_tekst()
+    def update_screen(self):
+        """Uuendab ekraani, kuvades vastava mängu oleku teksti."""
+        self.screen.fill(self.bg_color)
+
+        # Kuvame vastava teksti olenevalt mängu olekust
+        if self.is_running:
+            if self.is_paused:
+                self.display_pause_text()
+            else:
+                self.display_game_text()
         else:
-            # Joonistame mängu sisu siin, kui mäng pole pausil
-            font = pygame.font.Font(None, 36)
-            mängutekst = font.render("Mäng töötab...", True, ('white'))
-            ekraan.blit(mängutekst, (ekraani_laius // 2 - mängutekst.get_width() // 2, ekraani_kõrgus // 2))
-    else:
-        kuva_algus_tekst()  # Kuvab juhise mängu alustamiseks
+            self.display_start_text()
 
+        pygame.display.flip()
+
+    def run(self):
+        """Käivitatakse mängu põhitsükkel."""
+        while True:
+            self.handle_events()
+            self.update_screen()
+            self.clock.tick(30)  # 30 FPS
+
+
+# Käivitame mängu
+if __name__ == "__main__":
+    game = Game()
+    game.run()
     pygame.display.flip()
-    kell.tick(30)  # 30 FPS
+    clock.tick(30)  # 30 FPS
