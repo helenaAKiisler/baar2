@@ -21,7 +21,7 @@ from settings import WIDTH, HEIGHT, FPS, DARK_BROWN, GRAY, WHITE,  PRESET_TABLE_
 from player import Player
 from enemy import Enemy
 from progress_bar import GameTimer
-from object import Glass, Table
+from object import Glass, Table, Enemy
 from src.game import ui
 from pohiloogika import Game
 from main_menu import MainMenu

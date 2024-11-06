@@ -3,12 +3,11 @@ import random
 from settings import WIDTH, HEIGHT, BLACK
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x=100, y=100):  # Vaikimisi määrame x ja y väärtused
         super().__init__()
         self.image = pygame.Surface((30, 30))
-        self.image.fill(BLACK)
-        self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(40, WIDTH - 40), 0)
+        self.image.fill((0, 0, 255))
+        self.rect = self.image.get_rect(topleft=(x, y))
 
     def move(self):
         """Liigutab vaenlast allapoole. Kui jõuab ekraani alla, asetatakse tagasi üles."""
