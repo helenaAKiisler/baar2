@@ -1,10 +1,11 @@
+import sys
+
 import pygame
 import os
 import random
 from src.game import ui
 from player import Player
-from enemy import Enemy
-from object import Glass, Table
+from object import Glass, Table, Enemy
 from progress_bar import GameTimer
 from scene import Scene
 from settings import WIDTH, HEIGHT, GAME_DURATION
@@ -16,7 +17,7 @@ class GameLevel(Scene):
 
     def __init__(self, scene_switcher, level=1):
         super().__init__(scene_switcher)
-
+        self.is_running = True
         self.level = level
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_scene)
 
@@ -75,11 +76,11 @@ class GameLevel(Scene):
             self.glasses.add(glass)
             self.sprites.add(glass)
 
-            # Lisame vaenlased koos juhusliku positsiooniga
-            for _ in range(enemy_count):
-                x = random.randint(50, WIDTH - 50)
+        # Lisame vaenlased koos juhusliku positsiooniga
+        for _ in range(enemy_count):
+            x = random.randint(50, WIDTH - 50)
             y = random.randint(50, HEIGHT - 50)
-            enemy = Enemy(x, y)  # Lisame x ja y positsioonid
+            enemy = Enemy(x, y)  # Edastame x ja y positsioonid
             self.enemies.add(enemy)
             self.sprites.add(enemy)
 
@@ -95,9 +96,14 @@ class GameLevel(Scene):
             self.end_game()
             return
 
-        delta = pygame.time.Clock().tick(30) / 1000.0
-        self.player.update(delta)
-        self.enemies.update(delta)
+        delta = self.game_timer.get_delta_time()  # Delta time, näiteks 1 / FPS
+
+        # Käsitleme mängija liikumist
+        keys = pygame.key.get_pressed()
+        self.player.handle_movement(keys, self.tables, delta)
+
+        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
+        self.enemies.update()
 
         self.check_collisions()
         self.check_win_condition()
@@ -154,3 +160,8 @@ class GameLevel(Scene):
                 self.scene_switcher("NextLevel")  # Näide järgmisele tasemele liikumisest
             else:
                 self.scene_switcher("MainMenu")  # Pärast viimast levelit tagasi menüüsse
+
+    def handle_events(self, event):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()

@@ -9,6 +9,7 @@ class GameTimer:
         self.paused_time = 0  # Pausi ajal kogunenud aeg
         self.paused = False
         self.pause_start = None  # Pausi algusaeg
+        self.last_time = pygame.time.get_ticks()
 
     def toggle_pause(self):
         """Lülitab mängu pausile ja pausilt tagasi."""
@@ -34,6 +35,12 @@ class GameTimer:
             # Kui mäng ei ole pausil, arvuta kulunud aeg
             current_time = time.time() - self.start_time - self.paused_time
         return max(0, GAME_DURATION - current_time)
+
+    def get_delta_time(self):
+        current_time = pygame.time.get_ticks()
+        delta = (current_time - self.last_time) / 1000.0  # Sekundites
+        self.last_time = current_time
+        return delta
 
     def draw_progress_bar(self, screen):
         """Kuvab progressiriba ekraanile vastavalt järelejäänud ajale."""

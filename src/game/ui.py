@@ -1,24 +1,28 @@
 #siia tulevad erinevad nupud vms
+
 import pygame
 from settings import WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
 from typing import Callable
+pygame.font.init()  # Initsialiseerime Pygame'i fondisüsteemi enne FONT muutujat
 
 TEXT_COLOR = pygame.Color(LIGHT_GREEN)
-
 BUTTON_TEXT_COLOR = pygame.Color(DARK_GREEN)
 BUTTON_COLOR = pygame.Color(LIGHT_GREEN)
 BUTTON_HOVER_COLOR = pygame.Color(GREEN)
 BUTTON_PADDING = 15
 
-FONT: pygame.font.Font
+FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
+
 
 def initialize_font():
     global FONT
     FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
 class Button(pygame.Surface):
-
     def __init__(self, button_text: str, on_pressed: Callable):
+        global FONT
+        if FONT is None:
+            initialize_font()
         self.text = button_text
         self.on_pressed = on_pressed
         self.font_surface = FONT.render(button_text, True, BUTTON_TEXT_COLOR)

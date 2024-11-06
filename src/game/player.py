@@ -2,34 +2,36 @@ import pygame
 from settings import WIDTH, HEIGHT
 
 class Player(pygame.sprite.Sprite):
+    BASE_SPEED = 500  # Põhikiirus pikslites sekundis
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
 
-    def handle_movement(self, keys, tables):
+    def handle_movement(self, keys, tables, delta):
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse."""
-        if keys[pygame.K_UP] and self.rect.top > 0:
-            self.rect.y -= 5
-        if keys[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
-            self.rect.y += 5
-        if keys[pygame.K_LEFT] and self.rect.left > 0:
-            self.rect.x -= 5
-        if keys[pygame.K_RIGHT] and self.rect.right < WIDTH:
-            self.rect.x += 5
+        move_x = 0
+        move_y = 0
 
-        # Kontrollib kokkupõrkeid iga lauaga
+        # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
+        if keys[pygame.K_UP] and self.rect.top > 0:
+            move_y = -self.BASE_SPEED * delta
+        if keys[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
+            move_y = self.BASE_SPEED * delta
+        if keys[pygame.K_LEFT] and self.rect.left > 0:
+            move_x = -self.BASE_SPEED * delta
+        if keys[pygame.K_RIGHT] and self.rect.right < WIDTH:
+            move_x = self.BASE_SPEED * delta
+
+        # Liigume vastavalt arvutatud väärtustele
+        self.rect.x += move_x
+        self.rect.y += move_y
+
+        # Kontrollib kokkupõrkeid iga lauaga ja tühistab liikumise, kui on kokkupõrge
         for table in tables:
             if self.rect.colliderect(table.rect):
-                # Kui on kokkupõrge, liigutab mängija tagasi
-                if keys[pygame.K_UP]:
-                    self.rect.y += 5
-                if keys[pygame.K_DOWN]:
-                    self.rect.y -= 5
-                if keys[pygame.K_LEFT]:
-                    self.rect.x += 5
-                if keys[pygame.K_RIGHT]:
-                    self.rect.x -= 5
+                self.rect.x -= move_x
+                self.rect.y -= move_y
 
     def draw(self, surface):
         """Joonistab mängija ekraanile."""

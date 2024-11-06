@@ -13,7 +13,7 @@ class Glass(pygame.sprite.Sprite):
         pygame.draw.rect(screen, self.color, self.rect)
 
     def check_pickup(self, player, score):
-        #laiendan klaasi üleskorjamis/kokkupõrke ala esmalt
+        # laiendan klaasi üleskorjamis/kokkupõrke ala
         pickup_area = self.rect.inflate(40, 40)
 
         if pickup_area.colliderect(player.rect):
@@ -21,10 +21,9 @@ class Glass(pygame.sprite.Sprite):
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
 
-
-class Table:
+class Table(pygame.sprite.Sprite):  # Lisame pärimise pygame.sprite.Sprite klassist
     def __init__(self, x, y):
-        super().__init__()
+        super().__init__()  # Kutsume Sprite konstruktori
         self.image = pygame.Surface((50, 50))  # Määrame laua suuruse
         self.image.fill((150, 75, 0))  # Valime lauale pruuni värvi
         self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
@@ -33,9 +32,8 @@ class Table:
         pygame.draw.rect(screen, GRAY, self.rect)
 
 class Enemy(pygame.sprite.Sprite):
-    class Enemy(pygame.sprite.Sprite):
-        def __init__(self, x, y):
-            super().__init__()
-            self.image = pygame.Surface((30, 30))  # Määrame vaenlase suuruse
-            self.image.fill((0, 0, 255))  # Valime vaenlasele sinise värvi
-            self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
+    def __init__(self, x=100, y=100):  # Vaikimisi määrame x ja y väärtused
+        super().__init__()
+        self.image = pygame.Surface((30, 30))  # Määrame vaenlase suuruse
+        self.image.fill((0, 0, 255))  # Valime vaenlasele sinise värvi
+        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha

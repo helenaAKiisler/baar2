@@ -22,9 +22,10 @@ from player import Player
 from enemy import Enemy
 from progress_bar import GameTimer
 from object import Glass, Table, Enemy
-from src.game import ui
+from ui import initialize_font, TEXT_COLOR  # Importime initialize_font ja TEXT_COLOR
 from pohiloogika import Game
 from main_menu import MainMenu
+from game_level import GameLevel
 from scene import Scene
 
 # Algseaded
@@ -58,28 +59,39 @@ tables = [Table(x, y) for x, y in PRESET_TABLE_POSITIONS]  # Lauad kindlates pos
 glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
 glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types)["color"], random.choice(glass_types)["points"]) for table in tables]
 
-def scene_switcher(new_scene: Scene):
+
+# Stseeni vahetaja funktsioon
+def scene_switcher(new_scene_name):
     global current_scene
-    current_scene = new_scene
+    if new_scene_name == "MainMenu":
+        current_scene = MainMenu(scene_switcher, game_title="Baar2")
+    elif new_scene_name == "GameLevel":
+        current_scene = GameLevel(scene_switcher)
 
-# Põhitsükkel
-running = True
-score = 0
-game_timer = GameTimer()
 def main():
+    global current_scene
     pygame.init()
-    pygame.display.set_caption(GAME_TITLE)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    ui.initialize_font()
+    screen = pygame.display.set_mode((800, 600))
+    pygame.display.set_caption("Baar2")
 
-    scene_switcher(MainMenu(scene_switcher, GAME_TITLE))
+    # Initsialiseerime FONT enne MainMenu loomist
+    initialize_font()
 
+    # Algne stseen
+    current_scene = MainMenu(scene_switcher, game_title="Baar2")
+
+    # Mängutsükkel
     while current_scene.is_running:
-        current_scene.handle_events()
-        current_scene.update()
         current_scene.render(screen)
+        current_scene.update()  # Uuendab mänguloogikat, sealhulgas mängija liikumist
         pygame.display.flip()
-    pygame.quit()
 
-if __name__ == '__main__':
+        # Sündmuste töötlemine
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            current_scene.handle_events(event)  # Edastame üritused praegusele stseenile
+
+if __name__ == "__main__":
     main()
