@@ -22,15 +22,13 @@ from player import Player
 from enemy import Enemy
 from progress_bar import GameTimer
 from object import Glass, Table
-from ui import draw_score, draw_time, initialize_font
-import ui
+from src.game import ui
 from pohiloogika import Game
 from main_menu import MainMenu
 from scene import Scene
 
 # Algseaded
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
@@ -39,7 +37,6 @@ font = pygame.font.SysFont("Arial", 30)
 score = 0
 
 game = Game()
-game.screen = screen
 game.start_game()
 
 current_scene: Scene
@@ -69,52 +66,20 @@ def scene_switcher(new_scene: Scene):
 running = True
 score = 0
 game_timer = GameTimer()
-while running:
-    if game_timer.is_time_up():
-        print("Mängu aeg on läbi! Skoor:", score)
-        running = False
-        continue
+def main():
+    pygame.init()
+    pygame.display.set_caption(GAME_TITLE)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    ui.initialize_font()
 
-    # Sündmused
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game.quit_game()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Pausile minek või pausilt naasmine
-                game_timer.toggle_pause()
-                game.toggle_pause()
-            elif event.key == pygame.K_q:
-                game.quit_game()
-            elif event.key == pygame.K_c and game.is_paused:
-                game_timer.toggle_pause()
-                game.toggle_pause()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            for glass in glasses[:]:
-                picked_up, score = glass.check_pickup(player, score)
-                if picked_up:
-                    glasses.remove(glass)
+    scene_switcher(MainMenu(scene_switcher, GAME_TITLE))
 
-    # Mängu loogika ja liikumine, kui ei ole pausil
-    keys = pygame.key.get_pressed()
-    if not game_timer.paused:
-        player.handle_movement(keys, tables)
+    while current_scene.is_running:
+        current_scene.handle_events()
+        current_scene.update()
+        current_scene.render(screen)
+        pygame.display.flip()
+    pygame.quit()
 
-    # Ekraani uuendamine ja progressiriba joonistamine
-    screen.fill(DARK_BROWN)
-    player.draw(screen)
-    for table in tables:
-        table.draw(screen)
-    for glass in glasses:
-        glass.draw(screen)
-    draw_score(screen, font, score)
-    game_timer.draw_progress_bar(screen)
-
-    # Kuvame kas järelejäänud aja või pausiteate
-    if game_timer.paused:
-        pause_text = font.render("Pausil", True, WHITE)
-        screen.blit(pause_text, (WIDTH // 2 - 40, HEIGHT // 2))
-    else:
-        draw_time(screen, font, game_timer.get_time_left())
-
-    pygame.display.flip()
-    clock.tick(FPS)
+if __name__ == '__main__':
+    main()
