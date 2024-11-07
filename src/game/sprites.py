@@ -59,6 +59,7 @@ class Enemy(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     BASE_SPEED = 100  # Põhikiirus pikslites sekundis
     SPRITES = load_sprite_sheets("../../assets/designs/character", "mees", 32, 32, True)
+    ANIMATION_DELAY = 3
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -99,6 +100,8 @@ class Player(pygame.sprite.Sprite):
     def loop(self, fps):
         self.move(self.x_vel, self.y_vel)
 
+        self.update_sprite()
+
 #nagu allolev handle movement tuleb siiagi lisada see kokkupõrke tuvastus
     def handle_move(self, objects):
         keys = pygame.key.get_pressed()
@@ -116,19 +119,22 @@ class Player(pygame.sprite.Sprite):
       #Praegu saab siit kasutada ainult walk sheeti, aga tulevikus võiks ülejäänud ka olla
     def update_sprite(self):
         sprite_sheet = "idle"
-        if self.collect:
-            sprite_sheet = "collect"
-        elif self.x_vel != 0:
+        #if self.collect:
+        #    sprite_sheet = "collect"
+        if self.x_vel != 0:
             sprite_sheet = "walk"
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = (self.animation_count //
-                        self.ANIMATION_DELAY) % len(sprites)
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
         self.update()
-#Siin jäin pooleli. vaja veel lisada collision ja collection jne jne. ja ss animation
+    #Siin jäin pooleli. vaja veel lisada collision ja collection jne jne. ja ss animation
+
+    def update(self):
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)
 
     def handle_movement(self, keys, tables, delta):
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse."""
@@ -157,7 +163,6 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         """Joonistab mängija ekraanile."""
-        self.sprite = self.SPRITES["idle_" + self.direction][0]
         surface.blit(self.sprite, (self.rect.x, self.rect.y))
 
 #    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)

@@ -71,21 +71,32 @@ class GameLevel(Scene):
                     self.sprites.add(table)
                     self.collision_layer.add(table)
                     positions.append(new_rect)
-                    break
+                break
+                    # Klaaside paigutus
+        for table in self.tables:
+            # Ensure only up to 3 glasses are on each table in a 2+1 arrangement
+            for i in range(3):
+                if i < 2:
+                    x_offset = 10 + (i * 30)  # Adjust for spacing between glasses
+                    y_offset = 10
+                else:
+                    # Position the third glass below the two in the second row
+                    x_offset = 25
+                    y_offset = 40
 
-        # Klaaside paigutus
-        for _ in range(glass_count):
-            while True:
-                x = random.randint(50, WIDTH - 50)
-                y = random.randint(50, HEIGHT - 50)
-                new_rect = pygame.Rect(x, y, 20, 20)  # Klaasi suurus
-                if not any(new_rect.colliderect(existing) for existing in positions):
-                    color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
-                    glass = Glass(x, y, color, points)
-                    self.glasses.add(glass)
-                    self.sprites.add(glass)
-                    positions.append(new_rect)
-                    break
+                    # Calculate the position relative to the table
+                glass_x = table.rect.x + x_offset
+                glass_y = table.rect.y + y_offset
+
+                # Choose color and points
+                color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
+                glass = Glass(glass_x, glass_y, color, points)
+
+                    # Add the glass to groups and positioning list
+                self.glasses.add(glass)
+                self.sprites.add(glass)
+                positions.append(glass.rect)
+
 
         # Vaenlaste paigutus
         for _ in range(enemy_count):
@@ -110,7 +121,7 @@ class GameLevel(Scene):
 
         # Kui mängija viib klaasid baari juurde
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
-            self.score += self.carried_glasses * 2
+            self.score += self.carried_glasses
             self.carried_glasses = 0
 
         # Vaenlase kokkupõrke puhul kaotab mängija kaasaskantavad klaasid
@@ -120,7 +131,7 @@ class GameLevel(Scene):
     def check_win_condition(self):
         """Kontrollib, kas leveli võidutingimused on täidetud."""
         # Suurendame punktinõuet vastavalt leveli numbrile
-        required_score = 10 + (self.level - 1) * 5
+        required_score = 15 + (self.level - 1) * 5
         if self.score >= required_score:
             print("Läbisid leveli!")
             self.end_game()

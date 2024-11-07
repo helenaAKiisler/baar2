@@ -6,6 +6,7 @@ from src.game.sprites import load_sprite_sheets
 class Player(pygame.sprite.Sprite):
     BASE_SPEED = 100  # Põhikiirus pikslites sekundis
     SPRITES = load_sprite_sheets("../../assets/designs/character", "mees", 32, 32, True)
+    ANIMATION_DELAY = 5
 
     def __init__(self, x, y, image):
         super().__init__()
