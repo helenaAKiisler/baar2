@@ -33,7 +33,7 @@ class GameLevel(Scene):
         character_image_path = os.path.join(base_path, "assets", "designs", "character", "teenindus.mees2.png")
         player_image = pygame.image.load(character_image_path)
 
-        # Mängija loome koos algpositsiooni ja pildiga
+        # Mängija loomine
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
         self.collision_layer.add(self.player)
@@ -53,71 +53,67 @@ class GameLevel(Scene):
         self.max_glasses = 3
 
     def setup_level(self, level):
-        """Seadistab leveli raskusastme ja elementide arvu vastavalt levelile."""
+        """Seadistab leveli raskusastme ja elementide arvu."""
         table_count = min(5 + level, 10)  # Taseme kasvades suurendame lauaarvu
         glass_count = min(5 + 2 * level, 15)  # Taseme kasvades suurendame klaaside arvu
         enemy_count = min(1 + (level // 2), 5)  # Taseme kasvades suurendame vaenlaste arvu
 
-        # Lisame lauad koos juhusliku positsiooniga
+        # Juhuslik paigutus ja kattuvuse vältimine laudade jaoks
+        positions = []
         for _ in range(table_count):
-            x = random.randint(50, WIDTH - 100)
-            y = random.randint(50, HEIGHT - 100)
-            table = Table(x, y)
-            self.tables.add(table)
-            self.sprites.add(table)
-            self.collision_layer.add(table)
+            while True:
+                x = random.randint(50, WIDTH - 100)
+                y = random.randint(50, HEIGHT - 100)
+                new_rect = pygame.Rect(x, y, 50, 50)  # 50x50 on laua suurus
+                if not any(new_rect.colliderect(existing) for existing in positions):
+                    table = Table(x, y)
+                    self.tables.add(table)
+                    self.sprites.add(table)
+                    self.collision_layer.add(table)
+                    positions.append(new_rect)
+                    break
 
-        # Lisame klaasid
+        # Klaaside paigutus
         for _ in range(glass_count):
-            x = random.randint(50, WIDTH - 50)
-            y = random.randint(50, HEIGHT - 50)
-            color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
-            glass = Glass(x, y, color, points)
-            self.glasses.add(glass)
-            self.sprites.add(glass)
+            while True:
+                x = random.randint(50, WIDTH - 50)
+                y = random.randint(50, HEIGHT - 50)
+                new_rect = pygame.Rect(x, y, 20, 20)  # Klaasi suurus
+                if not any(new_rect.colliderect(existing) for existing in positions):
+                    color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
+                    glass = Glass(x, y, color, points)
+                    self.glasses.add(glass)
+                    self.sprites.add(glass)
+                    positions.append(new_rect)
+                    break
 
-        # Lisame vaenlased koos juhusliku positsiooniga
+        # Vaenlaste paigutus
         for _ in range(enemy_count):
-            x = random.randint(50, WIDTH - 50)
-            y = random.randint(50, HEIGHT - 50)
-            enemy = Enemy(x, y)  # Edastame x ja y positsioonid
-            self.enemies.add(enemy)
-            self.sprites.add(enemy)
-
-    def start(self):
-        """Alustab levelit."""
-        self.is_running = True
-        self.game_timer = GameTimer()
-        self.score = 0
-
-    def update(self):
-        """Uuendab leveli seisundit."""
-        if self.game_timer.is_time_up():
-            self.end_game()
-            return
-
-        delta = self.game_timer.get_delta_time()  # Delta time, näiteks 1 / FPS
-
-        # Käsitleme mängija liikumist
-        keys = pygame.key.get_pressed()
-        self.player.handle_movement(keys, self.tables, delta)
-
-        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
-        self.enemies.update()
-
-        self.check_collisions()
-        self.check_win_condition()
+            while True:
+                x = random.randint(50, WIDTH - 50)
+                y = random.randint(50, HEIGHT - 50)
+                new_rect = pygame.Rect(x, y, 30, 30)  # Vaenlase suurus
+                if not any(new_rect.colliderect(existing) for existing in positions):
+                    enemy = Enemy(x, y)
+                    self.enemies.add(enemy)
+                    self.sprites.add(enemy)
+                    positions.append(new_rect)
+                    break
 
     def check_collisions(self):
         """Kontrollib mängija ja klaaside või vaenlaste vahelisi kokkupõrkeid."""
         if self.carried_glasses < self.max_glasses:
             glasses_collected = pygame.sprite.spritecollide(self.player, self.glasses, True)
+            for glass in glasses_collected:
+                self.score += glass.points  # Lisab punktid skoorile klaasi väärtuse põhjal
             self.carried_glasses += len(glasses_collected)
 
+        # Kui mängija viib klaasid baari juurde
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
             self.score += self.carried_glasses * 2
             self.carried_glasses = 0
 
+        # Vaenlase kokkupõrke puhul kaotab mängija kaasaskantavad klaasid
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
             self.carried_glasses = 0
 
@@ -165,3 +161,22 @@ class GameLevel(Scene):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    def update(self):
+        """Uuendab leveli seisundit."""
+        if self.game_timer.is_time_up():
+            self.end_game()
+            return
+
+        delta = self.game_timer.get_delta_time()
+
+        # Käsitleme mängija liikumist
+        keys = pygame.key.get_pressed()
+        self.player.handle_movement(keys, self.tables, delta)
+
+        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
+        self.enemies.update()
+
+        # Kontrollime kokkupõrkeid ja võidutingimusi
+        self.check_collisions()
+        self.check_win_condition()

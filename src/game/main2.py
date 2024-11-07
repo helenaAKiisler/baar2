@@ -82,16 +82,16 @@ def main():
 
     # Mängutsükkel
     while current_scene.is_running:
-        current_scene.render(screen)
-        current_scene.update()  # Uuendab mänguloogikat, sealhulgas mängija liikumist
-        pygame.display.flip()
-
-        # Sündmuste töötlemine
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            current_scene.handle_events(event)  # Edastame üritused praegusele stseenile
+            current_scene.handle_events(event)
+
+        current_scene.update()  # Uuendab mänguloogikat, sealhulgas mängija liikumist
+        current_scene.render(screen)  # Renderdab stseeni
+        pygame.display.flip()
+        clock.tick(FPS)
 
 if __name__ == "__main__":
     main()

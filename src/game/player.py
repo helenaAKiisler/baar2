@@ -2,7 +2,8 @@ import pygame
 from settings import WIDTH, HEIGHT
 
 class Player(pygame.sprite.Sprite):
-    BASE_SPEED = 500  # Põhikiirus pikslites sekundis
+    BASE_SPEED = 100  # Põhikiirus pikslites sekundis
+
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
