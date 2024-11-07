@@ -98,7 +98,7 @@ class Player(pygame.sprite.Sprite):
     def loop(self, fps):
         self.move(self.x_vel, self.y_vel)
 
-#nagu allolev handle movement tuleb siingi lisada see kokkupõrke tuvastus
+#nagu allolev handle movement tuleb siiagi lisada see kokkupõrke tuvastus
     def handle_move(self, objects):
         keys = pygame.key.get_pressed()
 
