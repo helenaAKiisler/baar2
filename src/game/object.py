@@ -4,6 +4,7 @@ from settings import GLASS_SIZE, TABLE_SIZE, GRAY
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, color, points):
         super().__init__()
+        self.color = color
         self.image = pygame.Surface((20, 20))  # Määrame klaasi suuruse
         self.image.fill(color)  # Määrame klaasi värvi vastavalt etteantud värvile
         self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
