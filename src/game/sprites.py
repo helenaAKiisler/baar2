@@ -58,6 +58,7 @@ class Enemy(pygame.sprite.Sprite):
 
 class Player(pygame.sprite.Sprite):
     BASE_SPEED = 100  # Põhikiirus pikslites sekundis
+    SPRITES = load_sprite_sheets("../../assets/designs/character", "mees", 32, 32, True)
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -156,7 +157,8 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         """Joonistab mängija ekraanile."""
-        surface.blit(self.image, self.rect)
+        self.sprite = self.SPRITES["idle_" + self.direction][0]
+        surface.blit(self.sprite, (self.rect.x, self.rect.y))
 
 #    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
 
