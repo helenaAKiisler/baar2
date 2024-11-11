@@ -46,7 +46,7 @@ current_scene: Scene
 
 # Mängija pildi tee ja pildi laadimine
 base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-character_image_path = os.path.join(base_path, "assets", "designs", "character", "teenindus.mees2.png")
+character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
 player_image = pygame.image.load(character_image_path)
 
 # Objektide loomine

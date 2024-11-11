@@ -11,12 +11,12 @@ from scene import Scene
 from settings import WIDTH, HEIGHT, GAME_DURATION
 from bar import Bar
 
-
 class GameLevel(Scene):
     BACKGROUND_COLOR = pygame.Color(101, 67, 33)
 
-    def __init__(self, scene_switcher, level=1):
-        super().__init__(scene_switcher)
+    def __init__(self, scene_switcher, screen, level=1):
+        super().__init__(scene_switcher)  # Kutsume Scene konstruktorit
+        self.screen = screen  # Salvestame screen objekti
         self.is_running = True
         self.level = level
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_scene)
@@ -47,7 +47,7 @@ class GameLevel(Scene):
         self.setup_level(self.level)
 
         # Mängu muutujad
-        self.game_timer = GameTimer()
+        self.game_timer = GameTimer()  # Määrame game_timer objekti
         self.score = 0
         self.carried_glasses = 0
         self.max_glasses = 3
@@ -191,3 +191,6 @@ class GameLevel(Scene):
         # Kontrollime kokkupõrkeid ja võidutingimusi
         self.check_collisions()
         self.check_win_condition()
+
+        # Pausi ajal progressiriba ei täitu edasi
+        self.game_timer.draw_progress_bar(self.screen)

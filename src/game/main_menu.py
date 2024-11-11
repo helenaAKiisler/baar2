@@ -10,12 +10,14 @@ from game_level import GameLevel
 class MainMenu(Scene):
     BACKGROUND_COLOR = pygame.Color(DARK_GREEN)
 
-    def __init__(self, scene_switcher, game_title):
+    def __init__(self, scene_switcher, game_title, screen):
         super().__init__(scene_switcher)
         self.scene_switcher = scene_switcher
+        self.game_title = game_title
+        self.screen = screen  # Salvestame screen objekti
 
         self.title = ui.FONT.render(game_title, True, ui.TEXT_COLOR)
-        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel"))
+        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_scene)
 
     def render(self, screen: pygame.Surface):

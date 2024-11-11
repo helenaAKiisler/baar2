@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
 
-    def handle_movement(self, keys, tables, delta):
+    def handle_movement(self, keys: object, tables: object, delta: object) -> object:
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse."""
         move_x = 0
         move_y = 0
