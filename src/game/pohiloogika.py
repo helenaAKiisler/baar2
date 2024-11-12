@@ -27,17 +27,3 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    def handle_events(self):
-        """Käsitleb kasutaja sisendit ja sündmusi."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit_game()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:  # Kui vajutatakse 'A', käivitatakse mäng
-                    self.start_game()
-                elif event.key == pygame.K_p:  # Kui vajutatakse 'P', lülitatakse paus sisse või välja
-                    self.toggle_pause()
-                elif event.key == pygame.K_q:  # 'Q' lõpetamiseks
-                    self.quit_game()
-                elif event.key == pygame.K_c and self.is_paused:  # 'C' jätkamiseks, kui mäng on pausil
-                    self.toggle_pause()
