@@ -140,7 +140,7 @@ class GameLevel(Scene):
     def update(self):
         """Uuendab leveli seisundit."""
         if self.game_timer.is_time_up():
-            self.end_game()
+            self.quit_scene()
             return
 
         delta = self.game_timer.get_delta_time()  # Arvutame aja muutuse
