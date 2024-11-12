@@ -61,15 +61,14 @@ glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types
 
 game_timer = GameTimer()
 
-# Stseeni vahetaja funktsioon
 def scene_switcher(new_scene_name, screen=None):
     global current_scene
     if new_scene_name == "MainMenu":
-        current_scene = MainMenu(scene_switcher, game_title="Baar2")
+        current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
-        current_scene = GameLevel(scene_switcher, screen)
+        current_scene = GameLevel(scene_switcher, screen=screen)  # Edastame screen objekti
 
-def main(self=None):
+def main():
     global current_scene, score, game_timer
     screen = pygame.display.set_mode((800, 600))  # Loome screen objekti siin
 
@@ -77,13 +76,12 @@ def main(self=None):
     initialize_font()
 
     # Algne stseen
-    current_scene = MainMenu(scene_switcher, game_title="Baar2", screen=screen)  # Edastame screen objekti
+    current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)  # Edastame game_title ja screen
 
     # Mängutsükkel
     while current_scene.is_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game.quit_game()
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
@@ -91,23 +89,18 @@ def main(self=None):
                     game.toggle_pause()
                     game_timer.toggle_pause()
                 elif event.key == pygame.K_q:
-                    game.quit_game()
                     pygame.quit()
                     sys.exit()
                 elif event.key == pygame.K_c and game.is_paused:
                     game.toggle_pause()
                     game_timer.toggle_pause()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for glass in glasses[:]:
-                    picked_up, score = glass.check_pickup(player, score)
-                    if picked_up:
-                        glasses.remove(glass)
+
+            current_scene.handle_events(event)  # Kontrollime sündmusi (ka nupu vajutamist)
 
         current_scene.update()  # Uuendab mänguloogikat, sealhulgas mängija liikumist
         current_scene.render(screen)  # Edastame screen objekti
         pygame.display.flip()
-        clock.tick(FPS)
-    pygame.quit()
+        pygame.time.Clock().tick(60)
 
 if __name__ == "__main__":
     main()

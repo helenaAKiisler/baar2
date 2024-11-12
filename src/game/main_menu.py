@@ -1,40 +1,44 @@
-import sys
-
 import pygame
-
-from scene import Scene
-from settings import DARK_GRAY, DARK_GREEN, LIGHT_GREEN
+import sys
 import ui
+from settings import WIDTH, HEIGHT, LIGHT_GREEN  # IMPORTIGE WIDTH, HEIGHT ja LIGHT_GREEN
 from game_level import GameLevel
+from scene import Scene
 
 class MainMenu(Scene):
-    BACKGROUND_COLOR = pygame.Color(DARK_GREEN)
+    BACKGROUND_COLOR = pygame.Color(LIGHT_GREEN)
 
-    def __init__(self, scene_switcher, game_title, screen):
+    def __init__(self, scene_switcher, game_title, screen=None):
         super().__init__(scene_switcher)
-        self.scene_switcher = scene_switcher
         self.game_title = game_title
-        self.screen = screen  # Salvestame screen objekti
-
-        self.title = ui.FONT.render(game_title, True, ui.TEXT_COLOR)
+        self.screen = screen
+        # Start nupp
         self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_scene)
-
-    def render(self, screen: pygame.Surface):
-        screen.fill(MainMenu.BACKGROUND_COLOR)
-        screen.blit(self.title, ((screen.get_width() - self.title.get_width()) / 2, screen.get_height() * 0.2))
-
-        self.quit_button.render(screen, (
-            (screen.get_width() - self.quit_button.get_width()) / 2,
-            screen.get_height() - self.quit_button.get_height() - 10))
-
-        self.start_button.render(screen, (
-            (screen.get_width() - self.start_button.get_width()) / 2,
-            screen.get_height() - self.quit_button.get_height() - self.start_button.get_height() - 20))
+        # Quit nupp
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 
     def handle_events(self, event):
-        # Siin töötleme sündmused
+        """Siin töötleme sündmusi (ka nuppude vajutamist)."""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
-                pygame.quit()
+            if event.key == pygame.K_p:  # Kui vajutatakse P nuppu
+                self.toggle_pause()  # Lülitame pausi sisse või välja
+            elif event.key == pygame.K_q:  # Kui vajutatakse Q nuppu
+                pygame.quit()  # Väljuge mängust
                 sys.exit()
+
+        # Kontrollige nuppe
+        self.start_button.handle_events(event)
+        self.quit_button.handle_events(event)
+
+    def render(self, screen):
+        screen.fill((0, 0, 0))
+        self.start_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))  # Paigutame Start nupu
+        self.quit_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))  # Paigutame Quit nupu
+        title_text = pygame.font.Font(None, 48).render(self.game_title, True, (255, 255, 255))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 3))
+
+
+    def quit_game(self):
+        """Kui nupp Quit vajutatakse, siis lõpetame mängu."""
+        pygame.quit()
+        sys.exit()

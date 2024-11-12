@@ -18,35 +18,36 @@ def initialize_font():
     global FONT
     FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
-class Button(pygame.Surface):
-    def __init__(self, button_text: str, on_pressed: Callable):
-        global FONT
-        if FONT is None:
-            initialize_font()
-        self.text = button_text
+
+class Button:
+    def __init__(self, text, on_pressed):
+        self.text = text
         self.on_pressed = on_pressed
-        self.font_surface = FONT.render(button_text, True, BUTTON_TEXT_COLOR)
-        self.is_down = False
+        self.rect = pygame.Rect(0, 0, 200, 50)  # Nupu suurus
+        self.color = (16, 72, 36)  #Tumeroheline
+        self.text_surface = pygame.font.Font(None, 36).render(self.text, True, (255, 255, 255))
 
-        button_size = self.font_surface.get_rect().inflate(BUTTON_PADDING, BUTTON_PADDING).size
-        super().__init__(button_size)
+    def render(self, screen, position):
+        self.rect.topleft = position  # Määrame nupu asukoha
+        pygame.draw.rect(screen, self.color, self.rect)
 
-    def render(self, screen: pygame.Surface, position):
-        is_mouse_pressed = pygame.mouse.get_pressed(3)[0]
-        button_color = BUTTON_HOVER_COLOR if self.is_down else BUTTON_COLOR
+        # Teksti renderdamine keskmesse
+        text_rect = self.text_surface.get_rect(center=self.rect.center)
+        screen.blit(self.text_surface, text_rect)
 
-        detection_rect = pygame.draw.rect(screen, button_color, pygame.Rect(position, self.get_size()))
-        screen.blit(self.font_surface, (position[0] + BUTTON_PADDING / 2, position[1] + BUTTON_PADDING / 2))
-
-        if self.is_down and not is_mouse_pressed:
+    def check_click(self, pos):
+        """Kontrollib, kas nupp on klikitud."""
+        if self.rect.collidepoint(pos):
             self.on_pressed()
 
-        self.is_down = is_mouse_pressed and detection_rect.collidepoint(pygame.mouse.get_pos())
+    def handle_events(self, event):
+        """Kontrollib, kas nupp on vajutatud."""
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):  # Kui hiir on nupu peal ja nupp on vajutatud
+                if self.on_pressed:
+                    self.on_pressed()  # Kutsub välja nuppudele määratud tegevuse
 
 def draw_score(screen, font, score):
     score_text = font.render(f"Punktid: {score}", True, WHITE)
     screen.blit(score_text, (10, 10))
 
-def draw_time(screen, font, time_left):
-    time_text = font.render(f"Aega jäänud: {int(time_left)} s", True, WHITE)
-    screen.blit(time_text, (10, 50))

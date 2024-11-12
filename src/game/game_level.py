@@ -8,27 +8,37 @@ from player import Player
 from object import Glass, Table, Enemy
 from progress_bar import GameTimer
 from scene import Scene
-from settings import WIDTH, HEIGHT, GAME_DURATION
+from settings import WIDTH, HEIGHT, DARK_BROWN, GAME_DURATION
 from bar import Bar
 
+
 class GameLevel(Scene):
-    BACKGROUND_COLOR = pygame.Color(101, 67, 33)
-
+    BACKGROUND_COLOR = DARK_BROWN
     def __init__(self, scene_switcher, screen, level=1):
-        super().__init__(scene_switcher)  # Kutsume Scene konstruktorit
-        self.screen = screen  # Salvestame screen objekti
-        self.is_running = True
+        super().__init__(scene_switcher)
+        self.screen = screen
         self.level = level
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_scene)
+        self.is_running = True
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
+        self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
+        self.score = 0
+        self.carried_glasses = 0
+        self.max_glasses = 3
 
-        # Spraitide kihid
-        self.collision_layer = pygame.sprite.Group()
+
+        # Lisame kollisioonide kihid ja muud spraitide grupid
+        self.collision_layer = pygame.sprite.Group()  # SIIN MÄÄRAME KOLLISIOONI KIHID
         self.sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.glasses = pygame.sprite.Group()
         self.tables = pygame.sprite.Group()
 
-        # Mängija pildi laadimine
+        # Spraitide kihid
+        self.sprites = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
+        self.tables = pygame.sprite.Group()
+
+        # Mängija pildi määramine
         base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
         player_image = pygame.image.load(character_image_path)
@@ -36,29 +46,29 @@ class GameLevel(Scene):
         # Mängija loomine
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
-        self.collision_layer.add(self.player)
 
         # Baar
-        self.bar = Bar(WIDTH)
+        self.bar = Bar(200)  # Baar väiksem kui ekraani laius
         self.sprites.add(self.bar)
-        self.collision_layer.add(self.bar)
 
-        # Taseme seadistamine
-        self.setup_level(self.level)
+        # Pausi seaded
+        self.paused = False
+        self.game_timer = GameTimer()
+        self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
 
-        # Mängu muutujad
-        self.game_timer = GameTimer()  # Määrame game_timer objekti
-        self.score = 0
-        self.carried_glasses = 0
-        self.max_glasses = 3
+        # Startides ei ole nupp nähtav
+        self.continue_button.visible = False
+
+        self.setup_level(level)
+
 
     def setup_level(self, level):
-        """Seadistab leveli raskusastme ja elementide arvu."""
-        table_count = min(5 + level, 10)  # Taseme kasvades suurendame lauaarvu
-        glass_count = min(5 + 2 * level, 15)  # Taseme kasvades suurendame klaaside arvu
-        enemy_count = min(1 + (level // 2), 5)  # Taseme kasvades suurendame vaenlaste arvu
+        """Seadistab taseme raskusastme ja muud elemendid."""
+        table_count = min(5 + level, 10)  # Taseme raskusaste
+        glass_count = min(5 + 2 * level, 15)
+        enemy_count = min(1 + (level // 2), 5)
 
-        # Juhuslik paigutus ja kattuvuse vältimine laudade jaoks
+        # Paigutame lauad ja klaasid, tagame et lauad ei ole üksteise peal ega üksteise kõrval
         positions = []
         for _ in range(table_count):
             while True:
@@ -72,44 +82,121 @@ class GameLevel(Scene):
                     self.collision_layer.add(table)
                     positions.append(new_rect)
                 break
-                    # Klaaside paigutus
-        for table in self.tables:
-            # Ensure only up to 3 glasses are on each table in a 2+1 arrangement
-            for i in range(3):
-                if i < 2:
-                    x_offset = 10 + (i * 30)  # Adjust for spacing between glasses
-                    y_offset = 10
-                else:
-                    # Position the third glass below the two in the second row
-                    x_offset = 25
-                    y_offset = 40
 
-                    # Calculate the position relative to the table
+        # Klaaside paigutus
+        glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
+        for table in self.tables:
+            for i in range(3):  # Veenduge, et iga laud saab kuni 3 klaasi
+                x_offset = 10 + (i * 30) if i < 2 else 25
+                y_offset = 10 if i < 2 else 40
                 glass_x = table.rect.x + x_offset
                 glass_y = table.rect.y + y_offset
-
-                # Choose color and points
                 color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
                 glass = Glass(glass_x, glass_y, color, points)
-
-                    # Add the glass to groups and positioning list
                 self.glasses.add(glass)
                 self.sprites.add(glass)
                 positions.append(glass.rect)
 
+    def handle_events(self, event):
+        """Mängu sündmuste käsitlemine."""
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:  # Kui vajutatakse P, siis lülitame pausi sisse või välja
+                self.toggle_pause()
+        if event.type == pygame.MOUSEBUTTONDOWN:  # Kui vajutatakse hiirega nupp
+            if self.quit_button.rect.collidepoint(event.pos):  # Kui vajutatakse Quit nuppu
+                self.quit_game()
+            if self.continue_button.rect.collidepoint(event.pos):  # Kui vajutatakse Continue nuppu
+                self.continue_game()
 
-        # Vaenlaste paigutus
-        for _ in range(enemy_count):
-            while True:
-                x = random.randint(50, WIDTH - 50)
-                y = random.randint(50, HEIGHT - 50)
-                new_rect = pygame.Rect(x, y, 30, 30)  # Vaenlase suurus
-                if not any(new_rect.colliderect(existing) for existing in positions):
-                    enemy = Enemy(x, y)
-                    self.enemies.add(enemy)
-                    self.sprites.add(enemy)
-                    positions.append(new_rect)
-                    break
+    def toggle_pause(self):
+        """Lülitab pausi sisse ja välja."""
+        if self.paused:
+            self.resume_game()
+        else:
+            self.pause_game()
+
+    def pause_game(self):
+        """Pausib mängu ja kuvab 'Continue' nupu."""
+        self.paused = True
+        self.continue_button.visible = True  # Kuvab 'Continue' nupu
+
+        # Loome läbipaistva musta kihi ekraanile, et teha ekraan udune
+        overlay = pygame.Surface((WIDTH, HEIGHT))
+        overlay.set_alpha(150)  # Set transparency of the overlay (150 makes it semi-transparent)
+        overlay.fill((0, 0, 0))  # Fill with black color for the blur effect
+        self.screen.blit(overlay, (0, 0))  # Render the overlay to the screen
+
+    def show_continue_button(self):
+        self.continue_button.visible = True
+
+    def hide_continue_button(self):
+        self.continue_button.visible = False
+
+    def resume_game(self):
+        """Taaskäivitab mängu pärast pausi."""
+        self.paused = False
+        self.continue_button.visible = False  # Peidab 'Continue' nupu
+
+    def update(self):
+        """Uuendab leveli seisundit."""
+        if self.game_timer.is_time_up():
+            self.end_game()
+            return
+
+        delta = self.game_timer.get_delta_time()  # Arvutame aja muutuse
+
+        # Käsitleme mängija liikumist
+        keys = pygame.key.get_pressed()
+        self.player.handle_movement(keys, self.tables, delta)  # Edastame kõik vajalikud argumendid
+
+        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
+        self.enemies.update()
+
+        # Kontrollime kokkupõrkeid ja võidutingimusi
+        self.check_collisions()
+        self.check_win_condition()
+
+        # Pausi ajal progressiriba ei täitu edasi
+        self.game_timer.draw_progress_bar(self.screen)
+
+    def continue_game(self):
+        """Jätkab mängu pärast pausi."""
+        self.paused = False
+        self.continue_button.is_visible = False  # Peidab 'Continue' nupu
+        self.game_timer.resume()  # Taaskäivitab mängu ajamõõdiku
+
+    def render(self, screen):
+        """Renderdab mängu ekraanile."""
+        screen.fill(self.BACKGROUND_COLOR)  # Taust on pruun
+        self.sprites.draw(screen)
+
+        # Kui mäng on pausil, kuvatakse must ekraan ja 'Continue' nupp
+        if self.paused:
+            # Must taust ja overlay
+            overlay = pygame.Surface((WIDTH, HEIGHT))
+            overlay.set_alpha(150)  # Läbipaistev must kiht
+            overlay.fill((0, 0, 0))
+            screen.blit(overlay, (0, 0))
+
+            # Kuvame "Continue" nupu ekraani keskele
+            continue_button_position = (WIDTH // 2 - self.continue_button.rect.width // 2, HEIGHT // 2 - self.continue_button.rect.height // 2)
+            self.continue_button.render(screen, continue_button_position)
+        else:
+            # Joonista mängu tavaline ekraan
+            self.sprites.draw(screen)
+            self.game_timer.draw_progress_bar(screen)
+            ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
+
+        ui.draw_score(screen, pygame.font.Font(None, 36), self.score)  # Kuvab skoori
+
+        # Quit nupp paigutatud paremasse nurgasse
+        quit_button_position = (WIDTH - 250, HEIGHT - 70)
+        self.quit_button.render(screen, quit_button_position)
+
+    def quit_game(self):
+        """Mängu lõpetamine"""
+        pygame.quit()
+        sys.exit()
 
     def check_collisions(self):
         """Kontrollib mängija ja klaaside või vaenlaste vahelisi kokkupõrkeid."""
@@ -129,68 +216,5 @@ class GameLevel(Scene):
             self.carried_glasses = 0
 
     def check_win_condition(self):
-        """Kontrollib, kas leveli võidutingimused on täidetud."""
-        # Suurendame punktinõuet vastavalt leveli numbrile
-        required_score = 15 + (self.level - 1) * 5
-        if self.score >= required_score:
-            print("Läbisid leveli!")
-            self.end_game()
-
-    def render(self, screen):
-        """Kuvab leveli ekraanile."""
-        screen.fill(self.BACKGROUND_COLOR)
-        self.sprites.draw(screen)
-
-        # Kui mäng on lõppenud, kuvatakse ekraanil lõpp-skoor
-        if not self.is_running:
-            overlay = pygame.Surface((WIDTH, HEIGHT))
-            overlay.set_alpha(180)
-            overlay.fill((0, 0, 0))
-
-            end_text = pygame.font.Font(None, 48).render(f"Level {self.level} lõppenud!", True, (255, 255, 255))
-            score_text = pygame.font.Font(None, 36).render(f"Skoor: {self.score}", True, (255, 255, 255))
-
-            screen.blit(overlay, (0, 0))
-            screen.blit(end_text, (WIDTH // 2 - end_text.get_width() // 2, HEIGHT // 2 - 40))
-            screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 + 10))
-
-        # Mängu oleku kuvarid
-        self.quit_button.render(screen, (50, 550))
-        ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
-        self.game_timer.draw_progress_bar(screen)
-
-    def end_game(self):
-        """Lõpetab leveli ja suunab tagasi peamenüüsse või järgmisele levelile."""
-        self.is_running = False
-        if self.scene_switcher:
-            if self.level < 5:
-                self.scene_switcher("NextLevel")  # Näide järgmisele tasemele liikumisest
-            else:
-                self.scene_switcher("MainMenu")  # Pärast viimast levelit tagasi menüüsse
-
-    def handle_events(self, event):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-    def update(self):
-        """Uuendab leveli seisundit."""
-        if self.game_timer.is_time_up():
-            self.end_game()
-            return
-
-        delta = self.game_timer.get_delta_time()
-
-        # Käsitleme mängija liikumist
-        keys = pygame.key.get_pressed()
-        self.player.handle_movement(keys, self.tables, delta)
-
-        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
-        self.enemies.update()
-
-        # Kontrollime kokkupõrkeid ja võidutingimusi
-        self.check_collisions()
-        self.check_win_condition()
-
-        # Pausi ajal progressiriba ei täitu edasi
-        self.game_timer.draw_progress_bar(self.screen)
+        """Kontrollib, kas mängija on võitnud taseme."""
+        pass

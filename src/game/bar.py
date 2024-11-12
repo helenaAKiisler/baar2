@@ -3,8 +3,12 @@ import pygame
 from settings import DARK_BROWN, WIDTH
 
 class Bar(pygame.sprite.Sprite):
-    def __init__(self, WIDTH):
+    def __init__(self, width):
         super().__init__()
-        self.image = pygame.Surface((100, 40))
-        self.image.fill((139, 69, 19))
-        self.rect = self.image.get_rect(midtop=(WIDTH // 2, 10))
+        self.image = pygame.Surface((width, 50))  # Baar on laiem, kõrgus 50px
+        self.image.fill((99, 102, 106))  # Pruun värv
+        self.rect = self.image.get_rect()
+
+        # Paigutame baari ekraani ülaosas keskele
+        self.rect.x = (WIDTH - width) // 2  # Baar on keskendatud hor
+        self.rect.y = 50  # Baar asub ekraani ülaservas, kuid natuke allpool
