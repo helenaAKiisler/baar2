@@ -33,8 +33,15 @@ class Table(pygame.sprite.Sprite):  # Lisame pärimise pygame.sprite.Sprite klas
         pygame.draw.rect(screen, GRAY, self.rect)
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x=100, y=100):  # Vaikimisi määrame x ja y väärtused
+    def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((30, 30))  # Määrame vaenlase suuruse
-        self.image.fill((0, 0, 255))  # Valime vaenlasele sinise värvi
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
+        self.image = pygame.Surface((30, 30))  # Vaenlase suurus
+        self.image.fill((255, 0, 0))  # Vaenlane on punane
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        """Vaenlase liikumine (liigub random suunas või mängija poole)."""
+        self.rect.x += random.randint(-2, 2)  # Liikumine horisontaalses suunas
+        self.rect.y += random.randint(-2, 2)  # Liikumine vertikaalses suunas
