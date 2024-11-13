@@ -25,7 +25,7 @@ from ui import initialize_font, TEXT_COLOR  # Importime initialize_font ja TEXT_
 from pohiloogika import Game
 from scene import Scene
 from bar import Bar
-from main_menu import MainMenu
+
 
 
 # Algseaded
@@ -68,6 +68,7 @@ def scene_switcher(new_scene_name, screen=None):
     from game_level import GameLevel
     global current_scene
     if new_scene_name == "MainMenu":
+        from main_menu import MainMenu
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
         current_scene = GameLevel(scene_switcher, screen=screen)  # Edastame screen objekti
