@@ -51,7 +51,7 @@ class GameLevel(Scene):
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
 
-        self.enemy = Enemy(200, 80, enemy_image)
+        self.enemy = Enemy(200, 80, enemy_image, self.tables)
 
         # Baar
         self.bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -66,7 +66,6 @@ class GameLevel(Scene):
         self.continue_button.visible = False
 
         self.setup_level(level)
-
 
     def setup_level(self, level):
         """Seadistab taseme raskusastme ja muud elemendid."""
@@ -87,7 +86,7 @@ class GameLevel(Scene):
                     self.sprites.add(table)
                     self.collision_layer.add(table)
                     positions.append(new_rect)
-                break
+                    break  # Kui laud ei kattu teistega, paigutame selle edukalt
 
         # Klaaside paigutus
         glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
@@ -97,16 +96,21 @@ class GameLevel(Scene):
                 y_offset = 10 if i < 2 else 40
                 glass_x = table.rect.x + x_offset
                 glass_y = table.rect.y + y_offset
-                color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
-                glass = Glass(glass_x, glass_y, color, points)
-                self.glasses.add(glass)
-                self.sprites.add(glass)
-                positions.append(glass.rect)
 
-        for _ in range(1):
-            self.enemies.add(self.enemy)
-            self.sprites.add(self.enemy)
+                # Veenduge, et klaasid ei kattuks omavahel
+                glass_rect = pygame.Rect(glass_x, glass_y, 20, 20)  # Klaasi suurus
+                if not any(glass_rect.colliderect(existing.rect) for existing in self.glasses):
+                    color, points = random.choice([((255, 0, 0), 1), ((0, 255, 0), 2), ((0, 0, 255), 3)])
+                    glass = Glass(glass_x, glass_y, color, points)
+                    self.glasses.add(glass)
+                    self.sprites.add(glass)
+                    positions.append(glass.rect)
 
+        # Lisame vaenlased
+        for _ in range(enemy_count):
+            enemy = Enemy(random.randint(50, WIDTH - 100), random.randint(50, HEIGHT - 100), self.enemy, self.tables)
+            self.enemies.add(enemy)
+            self.sprites.add(enemy)
 
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""

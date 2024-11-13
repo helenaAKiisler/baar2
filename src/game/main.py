@@ -51,9 +51,13 @@ enemy_image = pygame.image.load(enemy_image_path)
 
 # Objektide loomine
 player = Player(WIDTH // 2, HEIGHT - 80, player_image)
-enemy = Enemy(200, 80, enemy_image)
-# Spraitide gruppide loomine
+# Kood, mis loob lauaobjektid ja edastab need vaenlasele
+tables = pygame.sprite.Group()
+table1 = Table(100, 100)
+table2 = Table(200, 200)
+tables.add(table1, table2)
 
+enemy = Enemy(200, 80, enemy_image, tables)
 
 game_timer = GameTimer()
 

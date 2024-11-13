@@ -2,6 +2,17 @@ import pygame
 from settings import GLASS_SIZE, TABLE_SIZE, GRAY, RED
 import random
 
+class Table(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((50, 50))  # Määrame laua suuruse
+        self.image.fill((150, 75, 0))  # Valime lauale pruuni värvi
+        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, GRAY, self.rect)
+
+
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, color, points):
         super().__init__()
@@ -23,31 +34,38 @@ class Glass(pygame.sprite.Sprite):
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
 
-class Table(pygame.sprite.Sprite):  # Lisame pärimise pygame.sprite.Sprite klassist
-    def __init__(self, x, y):
-        super().__init__()  # Kutsume Sprite konstruktori
-        self.image = pygame.Surface((50, 50))  # Määrame laua suuruse
-        self.image.fill((150, 75, 0))  # Valime lauale pruuni värvi
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, GRAY, self.rect)
 
 class Enemy(pygame.sprite.Sprite):
-    BASE_SPEED = 50
-    def __init__(self, x, y, image):
+    BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
+
+    def __init__(self, x, y, image, tables):
         super().__init__()
-#        self.image = pygame.Surface((30, 30))  # Vaenlase suurus
-#        self.image.fill(RED)  # Vaenlane on punane
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
 
+        # Liikumise algsuund (paremale)
+        self.direction = 1  # 1 tähendab paremale, -1 vasakule
+        self.tables = tables  # Lauad, millega vaenlane võib kokkupõrked teha
+
     def update(self):
-        """Vaenlase liikumine (liigub random suunas või mängija poole)."""
-        self.rect.x += random.randint(-2, 2)  # Liikumine horisontaalses suunas
-        self.rect.y += random.randint(-2, 2)  # Liikumine vertikaalses suunas
+        """Vaenlase liikumine ühesuunaliselt (näiteks paremale või vasakule)."""
+        # Uus positsioon enne liikumist
+        new_rect = self.rect.move(self.BASE_SPEED * self.direction, 0)
+
+        # Kontrollime, kas uus positsioon ei kattu laudadega
+        if not any(new_rect.colliderect(table.rect) for table in self.tables):
+            self.rect = new_rect  # Lubame liikumise ainult siis, kui ei kattu laudadega
+        else:
+            # Kui vaenlane puutub kokku lauaga, muudame liikumissuunda
+            self.direction *= -1  # Keerame ümber (liikumine vastassuunas)
+
+        # Kui vaenlane jõuab ekraani äärde, muudame liikumissuunda
+        if self.rect.right >= pygame.display.get_surface().get_width():
+            self.direction = -1  # Muudame suunda vasakule
+        elif self.rect.left <= 0:
+            self.direction = 1  # Muudame suunda paremale
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
