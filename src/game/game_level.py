@@ -1,5 +1,3 @@
-import sys
-
 import pygame
 import os
 import random
@@ -8,7 +6,7 @@ from player import Player
 from object import Glass, Table, Enemy
 from progress_bar import GameTimer
 from scene import Scene
-from settings import WIDTH, HEIGHT, DARK_BROWN, GAME_DURATION
+from settings import WIDTH, HEIGHT, DARK_BROWN
 from bar import Bar
 from src.game.main import enemy_image
 
@@ -277,7 +275,6 @@ class GameLevel(Scene):
                         if points_earned > 0:
                             self.score += points_earned  # Lisame teenitud punktid mängija skoorile
                             self.carried_glasses = 0  # Tühjendame kaasaskantavad klaasid
-                            print(f"Punktid teenitud: {points_earned}")  # Kontrollimiseks
 
                             # Eemaldame klaasid mängija käest, sest need on baari viidud
                             for glass in glasses_to_remove:
