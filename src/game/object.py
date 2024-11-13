@@ -14,16 +14,14 @@ class Table(pygame.sprite.Sprite):
 
 
 class Glass(pygame.sprite.Sprite):
-    def __init__(self, x, y, color, points):
+    def __init__(self, x, y, image, points):
         super().__init__()
-        self.color = color
-        self.image = pygame.Surface((20, 20))  # Määrame klaasi suuruse
-        self.image.fill(color)  # Määrame klaasi värvi vastavalt etteantud värvile
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
-        self.points = points  # Määrame klaasi punktiväärtuse
+        self.image = image  # Klaasi pilt
+        self.rect = self.image.get_rect(topleft=(x, y))  # Määrame klaasi positsiooni
+        self.points = points  # Klaasi punktiväärtus
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+        screen.blit(self.image, self.rect)  # Joonistame klaasi ekraanile
 
     def check_pickup(self, player, score):
         # laiendan klaasi üleskorjamis/kokkupõrke ala

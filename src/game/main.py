@@ -23,9 +23,10 @@ from progress_bar import GameTimer
 from object import Glass, Table, Enemy
 from ui import initialize_font, TEXT_COLOR  # Importime initialize_font ja TEXT_COLOR
 from pohiloogika import Game
-from main_menu import MainMenu
-from game_level import GameLevel
 from scene import Scene
+from bar import Bar
+from main_menu import MainMenu
+
 
 # Algseaded
 pygame.init()
@@ -41,6 +42,8 @@ game.start_game()
 
 current_scene: Scene
 
+bar = Bar
+
 # Mängija pildi tee ja pildi laadimine
 base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
@@ -50,7 +53,7 @@ enemy_image_path = os.path.join(base_path, "assets", "designs", "character", "na
 enemy_image = pygame.image.load(enemy_image_path)
 
 # Objektide loomine
-player = Player(WIDTH // 2, HEIGHT - 80, player_image)
+player = Player(WIDTH // 2, HEIGHT - 80, player_image, bar)
 # Kood, mis loob lauaobjektid ja edastab need vaenlasele
 tables = pygame.sprite.Group()
 table1 = Table(100, 100)
@@ -62,6 +65,7 @@ enemy = Enemy(200, 80, enemy_image, tables)
 game_timer = GameTimer()
 
 def scene_switcher(new_scene_name, screen=None):
+    from game_level import GameLevel
     global current_scene
     if new_scene_name == "MainMenu":
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
@@ -69,6 +73,7 @@ def scene_switcher(new_scene_name, screen=None):
         current_scene = GameLevel(scene_switcher, screen=screen)  # Edastame screen objekti
 
 def main():
+    from main_menu import MainMenu
     global current_scene, score, game_timer
     screen = pygame.display.set_mode((800, 600))  # Loome screen objekti siin
 

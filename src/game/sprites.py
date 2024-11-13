@@ -107,13 +107,13 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         self.x_vel = 0
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.move_left(PLAYER_VEL)
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.move_right(PLAYER_VEL)
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.move_up(PLAYER_VEL)
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.move_down(PLAYER_VEL)
 
       #Praegu saab siit kasutada ainult walk sheeti, aga tulevikus võiks ülejäänud ka olla
@@ -142,13 +142,13 @@ class Player(pygame.sprite.Sprite):
         move_y = 0
 
         # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
-        if keys[pygame.K_UP] and self.rect.top > 0:
+        if keys[pygame.K_UP] or keys[pygame.K_w] and self.rect.top > 0:
             move_y = -self.BASE_SPEED * delta
-        if keys[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s] and self.rect.bottom < HEIGHT:
             move_y = self.BASE_SPEED * delta
-        if keys[pygame.K_LEFT] and self.rect.left > 0:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a] and self.rect.left > 0:
             move_x = -self.BASE_SPEED * delta
-        if keys[pygame.K_RIGHT] and self.rect.right < WIDTH:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d] and self.rect.right < WIDTH:
             move_x = self.BASE_SPEED * delta
 
         # Liigume vastavalt arvutatud väärtustele
@@ -172,10 +172,10 @@ class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, color, points):
         super().__init__()
         self.color = color
-        self.image = pygame.Surface((20, 20))  # Määrame klaasi suuruse
-        self.image.fill(color)  # Määrame klaasi värvi vastavalt etteantud värvile
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
-        self.points = points  # Määrame klaasi punktiväärtuse
+        self.image = pygame.Surface((20, 20))  # Klaasi suurus
+        self.image.fill(color)  # Klaasi värv
+        self.rect = self.image.get_rect(topleft=(x, y))  # Klaasi asukoht
+        self.points = points  # Klaasi punktiväärtus
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)

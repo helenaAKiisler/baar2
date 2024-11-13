@@ -53,13 +53,13 @@ class Player(pygame.sprite.Sprite):
         move_y = 0
 
         # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
-        if keys[pygame.K_UP] and self.rect.top > 0:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:  # Ülespoole liikumine (nooleklahv või W)
             move_y = -self.BASE_SPEED * delta
-        if keys[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:  # Allapoole liikumine (nooleklahv või S)
             move_y = self.BASE_SPEED * delta
-        if keys[pygame.K_LEFT] and self.rect.left > 0:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:  # Vasakule liikumine (nooleklahv või A)
             move_x = -self.BASE_SPEED * delta
-        if keys[pygame.K_RIGHT] and self.rect.right < WIDTH:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:  # Paremale liikumine (nooleklahv või D)
             move_x = self.BASE_SPEED * delta
 
         # Liigume vastavalt arvutatud väärtustele
