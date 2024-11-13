@@ -19,7 +19,6 @@ import os.path
 import random
 from settings import WIDTH, HEIGHT, FPS, DARK_BROWN, GRAY, WHITE,  PRESET_TABLE_POSITIONS
 from player import Player
-from enemy import Enemy
 from progress_bar import GameTimer
 from object import Glass, Table, Enemy
 from ui import initialize_font, TEXT_COLOR  # Importime initialize_font ja TEXT_COLOR
