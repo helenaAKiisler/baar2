@@ -12,6 +12,7 @@ from settings import WIDTH, HEIGHT, DARK_BROWN, GAME_DURATION
 from bar import Bar
 
 
+
 class GameLevel(Scene):
     BACKGROUND_COLOR = DARK_BROWN
     def __init__(self, scene_switcher, screen, level=1):
@@ -51,7 +52,7 @@ class GameLevel(Scene):
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
 
-        self.enemy = Enemy(200, 80, enemy_image, self.tables)
+        self.enemy = Enemy(random.randint(50, WIDTH - 100), random.randint(50, HEIGHT - 100), enemy_image, self.tables)
 
         # Baar
         self.bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -78,7 +79,7 @@ class GameLevel(Scene):
         for _ in range(table_count):
             while True:
                 x = random.randint(50, WIDTH - 100)
-                y = random.randint(50, HEIGHT - 200)
+                y = random.randint(50, HEIGHT - 100)
                 new_rect = pygame.Rect(x, y, 50, 50)  # 50x50 on laua suurus
                 if not any(new_rect.colliderect(existing) for existing in positions):
                     table = Table(x, y)
@@ -108,9 +109,8 @@ class GameLevel(Scene):
 
         # Lisame vaenlased
         for _ in range(enemy_count):
-            enemy = Enemy(random.randint(50, WIDTH - 100), random.randint(50, HEIGHT - 100), self.enemy, self.tables)
-            self.enemies.add(enemy)
-            self.sprites.add(enemy)
+            self.enemies.add(self.enemy)
+            self.sprites.add(self.enemy)
 
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
