@@ -37,7 +37,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((30, 30))  # Vaenlase suurus
         self.image.fill((255, 0, 0))  # Vaenlane on punane
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
 

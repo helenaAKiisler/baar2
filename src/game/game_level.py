@@ -43,6 +43,7 @@ class GameLevel(Scene):
         character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
         player_image = pygame.image.load(character_image_path)
 
+
         # Mängija loomine
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
@@ -96,6 +97,11 @@ class GameLevel(Scene):
                 self.glasses.add(glass)
                 self.sprites.add(glass)
                 positions.append(glass.rect)
+
+        for _ in range(1):
+            enemy = Enemy()
+            self.enemies.add(enemy)
+            self.sprites.add(enemy)
 
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
