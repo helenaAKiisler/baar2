@@ -55,10 +55,6 @@ enemy = Enemy()
 enemies = pygame.sprite.Group(enemy)
 all_sprites = pygame.sprite.Group(player, enemy)
 
-tables = [Table(x, y) for x, y in PRESET_TABLE_POSITIONS]  # Lauad kindlates positsioonides
-glass_types = [{"color": "black", "points": 1}, {"color": "red", "points": 2}, {"color": "green", "points": 3}]
-glasses = [Glass(table.rect.x + 15, table.rect.y + 15, random.choice(glass_types)["color"], random.choice(glass_types)["points"]) for table in tables]
-
 game_timer = GameTimer()
 
 def scene_switcher(new_scene_name, screen=None):
