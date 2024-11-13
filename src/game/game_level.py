@@ -78,7 +78,7 @@ class GameLevel(Scene):
         for _ in range(table_count):
             while True:
                 x = random.randint(50, WIDTH - 100)
-                y = random.randint(50, HEIGHT - 100)
+                y = random.randint(50, HEIGHT - 200)
                 new_rect = pygame.Rect(x, y, 50, 50)  # 50x50 on laua suurus
                 if not any(new_rect.colliderect(existing) for existing in positions):
                     table = Table(x, y)
