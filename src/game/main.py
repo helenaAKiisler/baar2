@@ -46,13 +46,14 @@ base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
 player_image = pygame.image.load(character_image_path)
 
+enemy_image_path = os.path.join(base_path, "assets", "designs", "character", "naine", "idle.png")
+enemy_image = pygame.image.load(enemy_image_path)
+
 # Objektide loomine
 player = Player(WIDTH // 2, HEIGHT - 80, player_image)
-enemy = Enemy()
-
+enemy = Enemy(200, 80, enemy_image)
 # Spraitide gruppide loomine
-enemies = pygame.sprite.Group(enemy)
-all_sprites = pygame.sprite.Group(player, enemy)
+
 
 game_timer = GameTimer()
 

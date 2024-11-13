@@ -15,6 +15,7 @@ BLACK = (0, 0, 0)
 DARK_GRAY = (99, 102, 106)
 DARK_GREEN = (16, 72, 36)
 LIGHT_GREEN = (91, 139, 102)
+RED = (255, 0, 0)
 
 # Mängija seaded
 PLAYER_SIZE = 50

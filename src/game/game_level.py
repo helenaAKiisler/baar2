@@ -43,10 +43,15 @@ class GameLevel(Scene):
         character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
         player_image = pygame.image.load(character_image_path)
 
+        enemy_image_path = os.path.join(base_path, "assets", "designs", "character", "naine", "idle.png")
+        enemy_image = pygame.image.load(enemy_image_path)
+
 
         # Mängija loomine
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image)
         self.sprites.add(self.player)
+
+        self.enemy = Enemy(200, 80, enemy_image)
 
         # Baar
         self.bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -99,9 +104,9 @@ class GameLevel(Scene):
                 positions.append(glass.rect)
 
         for _ in range(1):
-            enemy = Enemy()
-            self.enemies.add(enemy)
-            self.sprites.add(enemy)
+            self.enemies.add(self.enemy)
+            self.sprites.add(self.enemy)
+
 
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
