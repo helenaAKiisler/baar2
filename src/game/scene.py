@@ -1,3 +1,4 @@
+# Stseenide vahetamise klass. Võimaldab vahetada ja eristada Main Menu ja Game levelit erinevate stseenidena.
 from abc import ABC
 
 import pygame
