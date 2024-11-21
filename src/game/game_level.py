@@ -9,6 +9,7 @@ from scene import Scene
 from settings import WIDTH, HEIGHT
 from bar import Bar
 from src.game.main import enemy_image
+from main import table_image
 
 
 class GameLevel(Scene):
@@ -40,9 +41,9 @@ class GameLevel(Scene):
         self.background_image = pygame.transform.scale(self.background_image,(WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
 
         # Laadige laua pilt (laud2.png)
-        table_image_path = os.path.join(self.base_path, "assets", "designs", "table", "laud2.png")
-        self.table_image = pygame.image.load(table_image_path)
-        self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
+        #table_image_path = os.path.join(self.base_path, "assets", "designs", "table", "laud2.png")
+        #table_image = pygame.image.load(table_image_path)
+        #self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
 
         # Baar
         self.bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -57,7 +58,7 @@ class GameLevel(Scene):
         self.sprites.add(self.player)
 
         # Laadige vaenlase pilt enne objekti loomist
-        enemy_image_path = os.path.join(self.base_path, "assets", "designs", "character", "naine", "idle.png")
+        enemy_image_path = os.path.join(self.base_path, "assets", "designs", "customer", "klient1.png")
         enemy_image = pygame.image.load(enemy_image_path)  # Laadige pilt
 
         # Loome vaenlase, edastades pildi
@@ -90,7 +91,7 @@ class GameLevel(Scene):
         for i in range(table_count):
             while True:
                 x, y = predefined_table_positions[i]
-                new_rect = pygame.Rect(x, y,80, 80)  # 80x80 on laua suurus
+                new_rect = pygame.Rect(x, y, 64, 64)  # 80x80 on laua suurus
 
                 # Kontrollime, et laud ei ole liiga lähedal baari
                 if new_rect.colliderect(self.bar.rect) or new_rect.centerx > self.bar.rect.right + 50:
@@ -98,7 +99,7 @@ class GameLevel(Scene):
 
                 # Kui laud ei kattu teistega ja ei ole liiga lähedal baari, paigutame laua
                 if not any(new_rect.colliderect(existing) for existing in positions):
-                    table = Table(x, y, self.table_image)
+                    table = Table(x, y, table_image)
                     self.tables.add(table)
                     self.sprites.add(table)
                     self.collision_layer.add(table)
@@ -113,8 +114,8 @@ class GameLevel(Scene):
         ]
 
         # Klaasi suuruse määramine (nt 50x50 px)
-        glass_width = 50
-        glass_height = 50
+        glass_width = 20
+        glass_height = 20
 
         # Paigutame klaasid laua keskpunkti ümber
         for table in self.tables:

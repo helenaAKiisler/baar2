@@ -36,21 +36,44 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
     return all_sprites
 
 class Enemy(pygame.sprite.Sprite):
+    COLOR = (255, 255, 255)
+    SPRITES = load_sprite_sheets("../../assets/designs", "customer", 32, 32, True)
+    ANIMATION_DELAY = 3
+    BASE_SPEED = 2
     def __init__(self, x=100, y=100):  # Vaikimisi määrame x ja y väärtused
         super().__init__()
         self.image = pygame.Surface((30, 30))
         self.image.fill((0, 0, 255))
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.direction = "left"
+        self.rect.x = x
+        self.rect.y = y
 
-    def move(self):
-        """Liigutab vaenlast allapoole. Kui jõuab ekraani alla, asetatakse tagasi üles."""
-        self.rect.y += 10
-        if self.rect.top > HEIGHT:
-            self.reset_position()
+        self.direction_x = 1
+        self.tables = tables
 
-    def reset_position(self):
-        """Paigutab vaenlase uuesti üles ekraani algusesse juhusliku horisontaalse positsiooniga."""
-        self.rect.center = (random.randint(40, WIDTH - 40), 0)
+    def update(self):
+        new_rect = self.rect.move(self.BASE_SPEED * self.direction_x, 0)
+
+        if not any(new_rect.colliderect(table.rect) for table in self.tables):
+            self.rect = new_rect
+        else:
+            self.direction_x *= -1
+
+        if self.rect.right >= pygame.display.get_surface().get_width():
+            self.direction_x = -1
+        elif self.rect.left <= 0:
+            self.direction_x = 1
+
+    def move(self, dx, dy):
+        self.rect.x += dx
+        self.rect.y += dy
+
+    def move_left(self, vel):
+        if self.direction != "left":
+            self.direction = "left"
+            self.animation_count = 0
+
 
     def draw(self, surface):
         """Joonistab vaenlase ekraanile."""
@@ -172,7 +195,7 @@ class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, color, points):
         super().__init__()
         self.color = color
-        self.image = pygame.Surface((20, 20))  # Klaasi suurus
+        self.image = pygame.Surface((30, 30))  # Klaasi suurus
         self.image.fill(color)  # Klaasi värv
         self.rect = self.image.get_rect(topleft=(x, y))  # Klaasi asukoht
         self.points = points  # Klaasi punktiväärtus
@@ -189,12 +212,13 @@ class Glass(pygame.sprite.Sprite):
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
 
-class Table(pygame.sprite.Sprite):  # Lisame pärimise pygame.sprite.Sprite klassist
-    def __init__(self, x, y):
-        super().__init__()  # Kutsume Sprite konstruktori
-        self.image = pygame.Surface((50, 50))  # Määrame laua suuruse
-        self.image.fill((150, 75, 0))  # Valime lauale pruuni värvi
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
+class Table(pygame.sprite.Sprite):
+    def __init__(self, x, y, image):
+        super().__init__()
+        self.image = image  # Määrame laua suuruse
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
     def draw(self, screen):
-        pygame.draw.rect(screen, GRAY, self.rect)
+        pygame.draw.rect(screen, GRAY, self.rect)  # Seadistame asukoha

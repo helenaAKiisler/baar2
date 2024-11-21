@@ -50,9 +50,9 @@ background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
 
 # Laadige laua pilt (laud2.png)
-table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "laud2.png")
-table_image = pygame.image.load(table_image_path)
-table_image = pygame.transform.scale(table_image, (130, 130))  # Scaling the table image
+table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "laud.png")
+table_image = pygame.image.load(table_image_path).convert()
+#table_image = pygame.transform.scale(table_image, (64, 64))  # Scaling the table image
 
 # Baar
 bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -62,7 +62,7 @@ character_image_path = os.path.join(base_path, "..", "assets", "designs", "chara
 player_image = pygame.image.load(character_image_path)
 
 # Laadige vaenlase pilt enne objekti loomist
-enemy_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "naine", "idle.png")
+enemy_image_path = os.path.join(base_path, "..", "assets", "designs", "customer", "klient1.png")
 enemy_image = pygame.image.load(enemy_image_path)
 
 # Objektide loomine

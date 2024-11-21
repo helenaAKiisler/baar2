@@ -17,7 +17,8 @@ class Bar(pygame.sprite.Sprite):
 class Table(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         super().__init__()
-        self.image = image  # Määrame laua suuruse
+        new_image = pygame.transform.scale(image, (64, 64))
+        self.image = new_image  # Määrame laua suuruse
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -29,16 +30,17 @@ class Table(pygame.sprite.Sprite):
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, image, points):
         super().__init__()
-        self.image = image  # Klaasi pilt
-        self.rect = self.image.get_rect(topleft=(x, y))  # Määrame klaasi positsiooni
+        new_image = pygame.transform.scale(image, (20, 20))
+        self.image = new_image  # Klaasi pilt
+        self.rect = self.image.get_rect(topleft=(x, y))  # Määrame klaasi positsiooni ja suuruse, et see oleks sama suur kui pilt
         self.points = points  # Klaasi punktiväärtus
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)  # Joonistame klaasi ekraanile
+        screen.blit(new_image, self.rect)  # Joonistame klaasi ekraanile
 
     def check_pickup(self, player, score):
         # laiendan klaasi üleskorjamis/kokkupõrke ala
-        pickup_area = self.rect.inflate(100, 100)
+        pickup_area = self.rect.inflate(50, 50)
 
         if pickup_area.colliderect(player.rect):
             score += self.points
@@ -47,11 +49,12 @@ class Glass(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
+    BASE_SPEED = 3  # Muudame kiiruselõigu, et liikumine oleks sujuvam
 
     def __init__(self, x, y, image, tables):
         super().__init__()
-        self.image = image
+        new_image = pygame.transform.scale(image, (64, 64))
+        self.image = new_image
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
