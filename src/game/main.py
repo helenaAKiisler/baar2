@@ -16,14 +16,15 @@
 ##################################################
 import pygame
 import sys
-import os.path
+import os
 from settings import WIDTH, HEIGHT
 from player import Player
 from progress_bar import GameTimer
 from object import Glass, Table, Enemy, Bar
-from ui import initialize_font # Importime initialize_font
+from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
+from main_menu import MainMenu
 
 # Algseaded
 pygame.init()
@@ -35,14 +36,33 @@ score = 0
 game = Game()
 game.start_game()
 current_scene: Scene
-bar = Bar
 
-# Mängija ja vastase failitee ja pildi laadimine
-base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-character_image_path = os.path.join(base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
+# Game initialization
+screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Loome screen objekti
+initialize_font()  # Initsialiseerime FONT
+
+# Mängija ja vastase, tausta failitee ja pildi laadimine
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Töötab igasuguste süsteemide puhul
+
+# Taustapildi laadimine
+background_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "floor.png")
+background_image = pygame.image.load(background_image_path)
+background_image = pygame.transform.scale(background_image, (WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
+
+# Laadige laua pilt (laud2.png)
+table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "laud2.png")
+table_image = pygame.image.load(table_image_path)
+table_image = pygame.transform.scale(table_image, (130, 130))  # Scaling the table image
+
+# Baar
+bar = Bar(200)  # Baar väiksem kui ekraani laius
+
+# Mängija pildi määramine
+character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "teenindus.mees2.png")
 player_image = pygame.image.load(character_image_path)
 
-enemy_image_path = os.path.join(base_path, "assets", "designs", "character", "naine", "idle.png")
+# Laadige vaenlase pilt enne objekti loomist
+enemy_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "naine", "idle.png")
 enemy_image = pygame.image.load(enemy_image_path)
 
 # Objektide loomine
@@ -50,12 +70,13 @@ player = Player(WIDTH // 2, HEIGHT - 80, player_image, bar)
 
 # Kood, mis loob lauaobjektid ja edastab need vaenlasele
 tables = pygame.sprite.Group()
-table1 = Table(100, 100)
-table2 = Table(200, 200)
-tables.add(table1, table2)
+table1 = Table(100, 100, table_image)  # Edastame table_image
+tables.add(table1)
 
+# Loome vaenlase
 enemy = Enemy(200, 80, enemy_image, tables)
 
+# Mängu aja loogika
 game_timer = GameTimer()
 
 # Ekraani stseenivahetus funktsioon
@@ -70,12 +91,7 @@ def scene_switcher(new_scene_name, screen=None):
 
 # Põhifunktsioon
 def main():
-    from main_menu import MainMenu
     global current_scene, score, game_timer
-    screen = pygame.display.set_mode((800, 600))  # Loome screen objekti
-
-    # Initsialiseerime FONT enne MainMenu loomist
-    initialize_font()
 
     # Algne stseen
     current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)

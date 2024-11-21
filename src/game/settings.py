@@ -1,3 +1,5 @@
+import os
+import pygame
 # Üldised värvid ja seaded mida mängus kasutatakse.
 
 # Ekraani seaded

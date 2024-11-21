@@ -6,13 +6,12 @@ from player import Player
 from object import Glass, Table, Enemy
 from progress_bar import GameTimer
 from scene import Scene
-from settings import WIDTH, HEIGHT, DARK_BROWN
+from settings import WIDTH, HEIGHT
 from bar import Bar
 from src.game.main import enemy_image
 
 
 class GameLevel(Scene):
-    BACKGROUND_COLOR = DARK_BROWN
 
     def __init__(self, scene_switcher, screen, level=1):
         super().__init__(scene_switcher)
@@ -34,6 +33,16 @@ class GameLevel(Scene):
         self.enemies = pygame.sprite.Group()
         self.glasses = pygame.sprite.Group()
         self.tables = pygame.sprite.Group()
+
+        # Laadige taustapilt
+        self.background_image_path = os.path.join(self.base_path, "assets", "designs", "background", "floor.png")
+        self.background_image = pygame.image.load(self.background_image_path)
+        self.background_image = pygame.transform.scale(self.background_image,(WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
+
+        # Laadige laua pilt (laud2.png)
+        table_image_path = os.path.join(self.base_path, "assets", "designs", "table", "laud2.png")
+        self.table_image = pygame.image.load(table_image_path)
+        self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
 
         # Baar
         self.bar = Bar(200)  # Baar väiksem kui ekraani laius
@@ -81,7 +90,7 @@ class GameLevel(Scene):
         for i in range(table_count):
             while True:
                 x, y = predefined_table_positions[i]
-                new_rect = pygame.Rect(x, y, 50, 50)  # 50x50 on laua suurus
+                new_rect = pygame.Rect(x, y,80, 80)  # 80x80 on laua suurus
 
                 # Kontrollime, et laud ei ole liiga lähedal baari
                 if new_rect.colliderect(self.bar.rect) or new_rect.centerx > self.bar.rect.right + 50:
@@ -89,7 +98,7 @@ class GameLevel(Scene):
 
                 # Kui laud ei kattu teistega ja ei ole liiga lähedal baari, paigutame laua
                 if not any(new_rect.colliderect(existing) for existing in positions):
-                    table = Table(x, y)
+                    table = Table(x, y, self.table_image)
                     self.tables.add(table)
                     self.sprites.add(table)
                     self.collision_layer.add(table)
@@ -103,23 +112,41 @@ class GameLevel(Scene):
             {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "martini.png")),"points": 3}
         ]
 
-        # Klaasi suuruse muutmine
-        for glass in glass_types:
-            # Muutame klaasi pildi suuruseks (nt 40x40)
-            glass["image"] = pygame.transform.scale(glass["image"], (20, 20))
+        # Klaasi suuruse määramine (nt 50x50 px)
+        glass_width = 50
+        glass_height = 50
 
+        # Paigutame klaasid laua keskpunkti ümber
         for table in self.tables:
-            for i in range(3):  # Veenduge, et iga laud saab kuni 3 klaasi
-                x_offset = 10 + (i * 30) if i < 2 else 25
-                y_offset = 10 if i < 2 else 40
-                glass_x = table.rect.x + x_offset
-                glass_y = table.rect.y + y_offset
+            table_rect = table.rect
+            table_width = table_rect.width
+            table_height = table_rect.height
 
-                # Veenduge, et klaasid ei kattuks omavahel
-                glass_rect = pygame.Rect(glass_x, glass_y, 40, 40)  # Klaasi uus suurus
+            # Määrame laua keskpunkti
+            table_centerx = table_rect.centerx
+            table_centery = table_rect.centery
+
+            # Paigutame klaasid täpselt laua keskpunkti ümber, et need ei ulatuks laua piiridest välja
+            for i in range(3):
+                # Iga klaasi paigutamine erinevatesse kohtadesse laua ümber
+                if i == 0:
+                    # Esimene klaas paigutatakse laua vasakule küljele
+                    x_offset = table_centerx - glass_width - 5  # Väike kaugus vasakule
+                    y_offset = table_centery - (glass_height // 2)  # Keskendub vertikaalselt
+                elif i == 1:
+                    # Teine klaas paigutatakse laua keskmesse
+                    x_offset = table_centerx - (glass_width // 2)  # Keskendab klaasi laua keskosas
+                    y_offset = table_centery - (glass_height // 2)  # Keskendab klaasi laua keskosas
+                else:
+                    # Kolmas klaas paigutatakse laua paremale küljele
+                    x_offset = table_centerx + 5  # Väike kaugus paremale
+                    y_offset = table_centery - (glass_height // 2)  # Keskendub vertikaalselt
+
+                # Kontrollime, et klaasi positsioon ei kattu teiste klaasidega
+                glass_rect = pygame.Rect(x_offset, y_offset, glass_width, glass_height)
                 if not any(glass_rect.colliderect(existing.rect) for existing in self.glasses):
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
-                    glass = Glass(glass_x, glass_y, glass_data["image"], glass_data["points"])
+                    glass = Glass(x_offset, y_offset, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)
                     self.sprites.add(glass)
                     positions.append(glass.rect)
@@ -213,8 +240,11 @@ class GameLevel(Scene):
         self.game_timer.resume()  # Taaskäivitab mängu ajamõõdiku
 
     def render(self, screen):
-        """Renderdab mängu ekraanile."""
-        screen.fill(self.BACKGROUND_COLOR)  # Taust on pruun
+        # Kuvame taustapildi mitmekordistamise, et katta kogu ekraan
+        for x in range(0, WIDTH, self.background_image.get_width()):
+            for y in range(0, HEIGHT, self.background_image.get_height()):
+                screen.blit(self.background_image, (x, y))  # Taust kuvatakse mitmekordselt üle ekraani
+
         self.sprites.draw(screen)
 
         # Kui mäng on pausil, kuvatakse must ekraan ja 'Continue' nupp

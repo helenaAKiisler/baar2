@@ -15,11 +15,12 @@ class Bar(pygame.sprite.Sprite):
         self.rect.y = 50  # Baar asub ekraani ülaservas, kuid natuke allpool
 
 class Table(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image):
         super().__init__()
-        self.image = pygame.Surface((50, 50))  # Määrame laua suuruse
-        self.image.fill((150, 75, 0))  # Valime lauale pruuni värvi
-        self.rect = self.image.get_rect(topleft=(x, y))  # Seadistame asukoha
+        self.image = image  # Määrame laua suuruse
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
     def draw(self, screen):
         pygame.draw.rect(screen, GRAY, self.rect)
@@ -37,7 +38,7 @@ class Glass(pygame.sprite.Sprite):
 
     def check_pickup(self, player, score):
         # laiendan klaasi üleskorjamis/kokkupõrke ala
-        pickup_area = self.rect.inflate(50, 50)
+        pickup_area = self.rect.inflate(100, 100)
 
         if pickup_area.colliderect(player.rect):
             score += self.points
