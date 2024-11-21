@@ -1,6 +1,7 @@
+# Mängija klass koos mängija spetsiifilitse funktsioonidega
 import pygame
 from settings import WIDTH, HEIGHT
-from bar import Bar
+from object import Bar
 
 bar = Bar
 
@@ -43,12 +44,12 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom > HEIGHT:  # Mängija ei saa minna allapoole väljapoole
             self.rect.bottom = HEIGHT
 
-        # Kontrollime, kas mängija puutub kokku baari
+        # Kontrollime, kas mängija puutub kokku baariga
         if self.rect.colliderect(self.bar.rect):
             # Kui mängija liigub baari taha (üles- või allapoole), piirame liikumist
-            if self.rect.top < self.bar.rect.bottom and move_y < 0:  # Ei saa minna baari taha ülespoole
+            if self.rect.top < self.bar.rect.bottom and move_y < 0:  # Ei saa minna baari taha ülevalt
                 self.rect.top = self.bar.rect.bottom
-            if self.rect.bottom > self.bar.rect.top and move_y > 0:  # Ei saa minna baari taha allapoole
+            if self.rect.bottom > self.bar.rect.top and move_y > 0:  # Ei saa minna baari taha altpoolt
                 self.rect.bottom = self.bar.rect.top
 
         # Kontrollime kokkupõrkeid laudadega
@@ -58,8 +59,8 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x -= move_x
                 self.rect.y -= move_y
 
+    # Joonistab mängija ekraanile
     def draw(self, surface):
-        """Joonistab mängija ekraanile."""
         surface.blit(self.image, self.rect)
 
 #    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
