@@ -1,7 +1,4 @@
-import time
-import pygame
-from settings import GAME_DURATION, WHITE, GREEN
-
+# Määrab ära progressiriba ja selle muutumise mängu alustamisel pausile minekul ja lõpetamisel.
 import time
 import pygame
 from settings import GAME_DURATION, WHITE, GREEN
@@ -17,38 +14,38 @@ class GameTimer:
         self.current_time = 0  # Üldine aeg, mis on möödunud
         self.time_at_pause = 0  # Salvestame progressiriba hetke väärtuse pausi alguses
 
+    # Lülitab pausi sisse ja välja.
     def toggle_pause(self):
-        """Lülitab pausi sisse ja välja."""
         if self.paused:
             self.resume()  # Kui paus lõppeb, jätkame täitumist
         else:
             self.pause()  # Kui paus algab, peatame täitumise
 
+    #Peatab ajamõõdiku täitumise.
     def pause(self):
-        """Peatab ajamõõdiku täitumise."""
         self.paused = True
         self.pause_start = time.time()  # Salvestame pausi algusaja
 
+    # Taaskäivitab ajamõõdiku täitumise pärast pausi
     def resume(self):
-        """Taaskäivitab ajamõõdiku täitumise pärast pausi."""
         if self.pause_start is not None:  # Veenduge, et paus on algatatud
             self.paused = False
             self.elapsed_paused_time += time.time() - self.pause_start  # Arvutame, kui kaua paus kestis
             self.start_time = time.time() - self.elapsed_paused_time  # Jätkame samalt kohalt
             self.pause_start = None  # Pärast taaskäivitamist nullime pause_starti
 
+    # Arvutab jäänud aja, võttes arvesse pausi kestust.
     def get_time_left(self):
-        """Arvutab jäänud aja, võttes arvesse pausi kestust."""
         if self.paused:
             return self.time_at_pause  # Kui paus, siis progressiriba ei täitu
         return max(0, GAME_DURATION - (time.time() - self.start_time - self.elapsed_paused_time))
 
+    # Kontrollib, kas aeg on läbi.
     def is_time_up(self):
-        """Kontrollib, kas aeg on läbi."""
         return self.get_time_left() <= 0  # Kui jäänud aeg on null või negatiivne, siis on aeg läbi
 
+    # Arvutab aja muutuse viimase ja praeguse hetke vahel sekundites.
     def get_delta_time(self):
-        """Arvutab aja muutuse viimase ja praeguse hetke vahel sekundites."""
         if self.paused:
             return 0  # Kui paus on, ei liigu aeg edasi
         current_time = pygame.time.get_ticks()
@@ -56,8 +53,8 @@ class GameTimer:
         self.last_time = current_time
         return delta
 
+    # Kuvab progressiriba ekraanile vastavalt jäänud ajale.
     def draw_progress_bar(self, screen):
-        """Kuvab progressiriba ekraanile vastavalt jäänud ajale."""
         time_left = self.get_time_left()
 
         # Arvutame progressiriba täitumise protsendi
@@ -71,3 +68,4 @@ class GameTimer:
         # Kuvame progressiriba
         pygame.draw.rect(screen, WHITE, (200, 10, 200, 20), 2)  # Riba raam
         pygame.draw.rect(screen, GREEN, (200, 10, progress_width, 20))  # Täituv progressiriba
+
