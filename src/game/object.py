@@ -40,7 +40,7 @@ class Glass(pygame.sprite.Sprite):
 
     def check_pickup(self, player, score):
         # laiendan klaasi üleskorjamis/kokkupõrke ala
-        pickup_area = self.rect.inflate(50, 50)
+        pickup_area = self.rect.inflate(80, 80)
 
         if pickup_area.colliderect(player.rect):
             score += self.points

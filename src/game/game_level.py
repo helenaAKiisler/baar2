@@ -282,7 +282,8 @@ class GameLevel(Scene):
         if self.carried_glasses < self.max_glasses:
             glasses_collected = pygame.sprite.spritecollide(self.player, self.glasses, True)
             for glass in glasses_collected:
-                self.carried_glasses += 1  # Lisame klaasi, aga punktid ei suurene veel
+                glass = 1
+                self.carried_glasses += glass  # Lisame klaasi, aga punktid ei suurene veel
 
         # Kui mängija viib klaasid baari juurde ja vajutab hiireklahvi, saab ta punkte klaasi väärtuse järgi
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
