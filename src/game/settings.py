@@ -1,4 +1,4 @@
-# settings.py
+# Üldised värvid ja seaded mida mängus kasutatakse.
 
 # Ekraani seaded
 WIDTH, HEIGHT = 800, 600
