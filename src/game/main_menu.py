@@ -1,8 +1,8 @@
+# Start menüü kuvamine ekraanile ja nuppude seaded.
 import pygame
 import sys
 import ui
-from settings import WIDTH, HEIGHT, LIGHT_GREEN  # IMPORTIGE WIDTH, HEIGHT ja LIGHT_GREEN
-from game_level import GameLevel
+from settings import WIDTH, HEIGHT
 from scene import Scene
 
 class MainMenu(Scene):
@@ -17,8 +17,8 @@ class MainMenu(Scene):
         # Quit nupp
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis viib tagasi MainMenu
 
+    # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):
-        """Siin töötleme sündmusi (ka nuppude vajutamist)."""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:  # Kui vajutatakse P nuppu
                 self.toggle_pause()  # Lülitame pausi sisse või välja
@@ -28,7 +28,7 @@ class MainMenu(Scene):
         # Kontrollige nuppe
         self.start_button.handle_events(event)
         self.quit_button.handle_events(event)
-
+    # Nuppude paigutamine ekraanile
     def render(self, screen):
         screen.fill(self.BACKGROUND_COLOR)
         self.start_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))  # Paigutame Start nupu
@@ -37,10 +37,8 @@ class MainMenu(Scene):
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 3))
 
     def quit_game(self):
-        """Kui nupp Quit vajutatakse, siis lõpetame mängu."""
         pygame.quit()
         sys.exit()
 
     def toggle_pause(self):
-        """Siin saate lülitada pausi sisse või välja, kui on vajalik."""
         pass
