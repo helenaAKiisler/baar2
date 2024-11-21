@@ -1,4 +1,4 @@
-#siia tulevad erinevad nupud vms
+# Fonti initseerimine ja nuppude klass, mis sätestab ära erinevad nupud mängus.
 
 import pygame
 from settings import WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
