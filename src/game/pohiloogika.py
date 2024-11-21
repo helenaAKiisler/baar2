@@ -1,13 +1,13 @@
+# Määrab ära mängu klassi
 import pygame
 import sys
-from settings import DARK_BROWN
 from progress_bar import GameTimer
 clock = pygame.time.Clock()
 
 class Game:
     def __init__(self):
         self.is_paused = False
-        self.game_timer = GameTimer()  # game_timer tuleb määrata õigesti
+        self.game_timer = GameTimer()
 
     def start_game(self):
         """Algatab mängu ajastamise ja muud mängu algseaded."""
@@ -26,4 +26,6 @@ class Game:
         """Lõpetab mängu ja sulgeb akna."""
         pygame.quit()
         sys.exit()
+
+
 
