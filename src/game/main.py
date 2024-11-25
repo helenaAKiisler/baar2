@@ -50,7 +50,7 @@ background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
 
 # Laadige laua pilt (laud2.png)
-table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "laud2.png")
+table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table2.png")
 table_image = pygame.image.load(table_image_path)
 #table_image = pygame.transform.scale(table_image, (64, 64))  # Scaling the table image
 
