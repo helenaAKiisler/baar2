@@ -21,11 +21,11 @@ class Player(pygame.sprite.Sprite):
         move_y = 0
 
         # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
-        if keys[pygame.K_UP] or keys[pygame.K_w]:  # Ülespoole liikumine
+        if keys[pygame.K_UP] or keys[pygame.K_w] > 0:  # Ülespoole liikumine
             move_y = -self.BASE_SPEED * delta
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:  # Allapoole liikumine
             move_y = self.BASE_SPEED * delta
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:  # Vasakule liikumine
+        if keys[pygame.K_LEFT] or keys[pygame.K_a] > 0:  # Vasakule liikumine
             move_x = -self.BASE_SPEED * delta
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:  # Paremale liikumine
             move_x = self.BASE_SPEED * delta
@@ -52,12 +52,17 @@ class Player(pygame.sprite.Sprite):
             if self.rect.bottom > self.bar.rect.top and move_y > 0:  # Ei saa minna baari taha altpoolt
                 self.rect.bottom = self.bar.rect.top
 
-        # Kontrollime kokkupõrkeid laudadega
+        # Kontrollib kokkupõrkeid iga lauaga ja tühistab liikumise, kui on kokkupõrge
         for table in tables:
             if self.rect.colliderect(table.rect):
-                # Tühistame liikumise, kui on kokkupõrge lauaga
-                self.rect.x -= move_x
-                self.rect.y -= move_y
+                if move_x > 0:  # Mängija liigub paremale, siis peata liikumine paremale
+                    self.rect.right = table.rect.left
+                if move_x < 0:  # Mängija liigub vasakule, siis peata liikumine vasakule
+                    self.rect.left = table.rect.right
+                if move_y > 0:  # Mängija liigub alla, siis peata liikumine alla
+                    self.rect.bottom = table.rect.top
+                if move_y < 0:  # Mängija liigub ülespoole, siis peata liikumine üles
+                    self.rect.top = table.rect.bottom
 
     # Joonistab mängija ekraanile
     def draw(self, surface):

@@ -82,8 +82,8 @@ class GameLevel(Scene):
 
         # Defineeri kindlad kohad lauadeks (koordinaadid)
         predefined_table_positions = [
-            (100, 100), (200, 200), (300, 300), (400, 100), (500, 200),
-            (100, 400), (200, 500), (300, 400), (400, 500), (500, 400)
+            (100, 100), (250, 200), (400, 300), (500, 100), (500, 200),
+            (100, 450), (200, 550), (350, 450), (500, 600), (600, 500)
         ]
 
         # Paigutame lauad kindlatesse kohtadesse, kontrollides, et nad ei oleks liiga lähedal baari
@@ -183,6 +183,15 @@ class GameLevel(Scene):
             if self.continue_button.rect.collidepoint(event.pos):  # Kui vajutatakse Continue nuppu
                 self.continue_game()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:  # Lülitame pausi sisse või välja
+                self.toggle_pause()
+            elif event.key == pygame.K_x:  # Klaasi korjamine
+                self.pick_up_glass()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # Vasak hiireklahv
+                self.pick_up_glass()
+
     def toggle_pause(self):
         """Lülitab pausi sisse ja välja."""
         if self.paused:
@@ -234,6 +243,15 @@ class GameLevel(Scene):
         # Pausi ajal progressiriba ei täitu edasi
         self.game_timer.draw_progress_bar(self.screen)
 
+        # Kui mängija viib klaasi baari, siis annab see punkte
+        if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
+            for glass in self.glasses:
+                if self.player.rect.colliderect(glass.rect):  # Kui klaas on baari peal
+                    self.score += glass.points  # Lisame klaasi väärtuse
+                    print(f"Viidud klaas baari! Punktid: {self.score}")
+                    self.carried_glasses -= 1  # Vähendame klaasi arvu pärast baari viimist
+                    break  # Kui klaas viidi baari, siis lõpetame kontrollimise
+
     def continue_game(self):
         """Jätkab mängu pärast pausi."""
         self.paused = False
@@ -247,6 +265,7 @@ class GameLevel(Scene):
                 screen.blit(self.background_image, (x, y))  # Taust kuvatakse mitmekordselt üle ekraani
 
         self.sprites.draw(screen)
+        ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
 
         # Kui mäng on pausil, kuvatakse must ekraan ja 'Continue' nupp
         if self.paused:
@@ -275,27 +294,43 @@ class GameLevel(Scene):
         from main_menu import MainMenu  # Liiguta impordi siin, et vältida tsüklilist importimist
         self.scene_switcher("MainMenu", self.screen)
 
+    def pick_up_glass(self):
+        """Kontrollib, kas mängija on laua lähedal ja korjab klaasi."""
+        if self.carried_glasses < 3:  # Kontrollime, kas mängijal on vähem kui 3 klaasi
+            for table in self.tables:
+                if self.player.rect.colliderect(table.rect.inflate(50, 50)):  # Kui mängija on laua lähedal
+                    for glass in self.glasses:
+                        if table.rect.colliderect(glass.rect):  # Kui klaas on laua peal
+                            self.glasses.remove(glass)
+                            self.sprites.remove(glass)
+                            self.carried_glasses += 1  # Lisame klaasi, mida mängija kannab
+                            print(f'Klaas korjatud! Kannab {self.carried_glasses} klaasi.')
+                            break  # Kui klaas on korjatud, lõppeb kontrollimine
+
     def check_collisions(self):
         """Kontrollib mängija ja klaaside või vaenlaste vahelisi kokkupõrkeid."""
 
-        # Klaaside kogumise kontroll (punktid ei suurene kohe)
+        # Klaaside kogumine (punktid ei suurene kohe)
         if self.carried_glasses < self.max_glasses:
             glasses_collected = pygame.sprite.spritecollide(self.player, self.glasses, True)
             for glass in glasses_collected:
-                glass = 1
-                self.carried_glasses += glass  # Lisame klaasi, aga punktid ei suurene veel
+                self.carried_glasses += 1  # Lisame klaasi mängijale
+                print(f'Klaas korjatud! Kannab {self.carried_glasses} klaasi.')
 
         # Kui mängija viib klaasid baari juurde ja vajutab hiireklahvi, saab ta punkte klaasi väärtuse järgi
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN:  # Kui hiireklahvi vajutatakse
                     if self.bar.rect.collidepoint(event.pos):  # Kui klikk on baari peal
+                        print("Baari klikkimist tuvastatud!")
+
                         points_earned = 0  # Algväärtustame teenitud punktide kogusumma
 
                         # Läbime kõik klaasid, mida mängija on korjanud
                         glasses_to_remove = []  # Loend klaasid, mis eemaldatakse
                         for glass in self.glasses:
                             if glass.rect.colliderect(self.player.rect):  # Kui klaas on mängijal kaasas
+                                print(f"Klaas {glass} on kaasas, teenitakse punkte!")
                                 points_earned += glass.points  # Lisame klaasi määratud punktid
                                 glasses_to_remove.append(glass)  # Lisame klaasi eemaldamiseks
 
@@ -305,6 +340,7 @@ class GameLevel(Scene):
 
                         # Kui teenitud punkte on
                         if points_earned > 0:
+                            print(f"Teenitud punktid: {points_earned}")
                             self.score += points_earned  # Lisame teenitud punktid mängija skoorile
                             self.carried_glasses = 0  # Tühjendame kaasaskantavad klaasid
 
@@ -313,6 +349,7 @@ class GameLevel(Scene):
                                 self.glasses.remove(glass)
                                 self.sprites.remove(glass)
                                 self.collision_layer.remove(glass)
+                                print(f"Viidud klaas baari! Punktid: {self.score}")
 
         # Vaenlase kokkupõrke kontroll
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
