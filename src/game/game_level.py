@@ -3,20 +3,20 @@ import os
 import random
 from src.game import ui
 from player import Player
-from object import Glass, Table, Enemy
+from object import Glass, Table, Enemy, Bar
 from progress_bar import GameTimer
 from scene import Scene
-from settings import WIDTH, HEIGHT
-from bar import Bar
 from src.game.main import enemy_image
-from main import table_image
+from main import table_image, bar_image
+from settings import WIDTH, HEIGHT
 
 
 class GameLevel(Scene):
 
-    def __init__(self, scene_switcher, screen, level=1):
+    def __init__(self, scene_switcher, screen, base_path, level=1):
         super().__init__(scene_switcher)
         self.screen = screen
+        self.base_path = base_path
         self.level = level
         self.is_running = True
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
@@ -46,12 +46,22 @@ class GameLevel(Scene):
         #self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
 
         # Baar
-        self.bar = Bar(200)  # Baar väiksem kui ekraani laius
-        self.sprites.add(self.bar)
+        bar_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table.png")
+        self.bar_image = pygame.image.load(bar_image_path)
+        self.rect = self.bar_image.get_rect()
+
+        # Baar objekti loomine
+        self.bar = Bar(200)
+        self.sprites.add(self.bar)  # Lisa baar sprite gruppi
 
         # Mängija pildi määramine
         character_image_path = os.path.join(self.base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
         player_image = pygame.image.load(character_image_path)
+        self.rect = self.bar_image.get_rect()
+
+        # Paigutame baari ekraani ülaosas keskele
+        self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
+        self.rect.y = 50  # Baar asub ekraani ülaservas
 
         # Mängija loomine
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image, self.bar)

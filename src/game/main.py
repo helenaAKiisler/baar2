@@ -55,7 +55,10 @@ table_image = pygame.image.load(table_image_path)
 #table_image = pygame.transform.scale(table_image, (64, 64))  # Scaling the table image
 
 # Baar
-bar = Bar(200)  # Baar väiksem kui ekraani laius
+bar = Bar(200)  # Baar, mille suurus määratakse
+# Muudame baari pildi kasutama laua pilti
+bar_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table.png")
+bar_image = pygame.image.load(bar_image_path)
 
 # Mängija pildi määramine
 character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "teenindus.mees2.png")
@@ -66,7 +69,7 @@ enemy_image_path = os.path.join(base_path, "..", "assets", "designs", "customer"
 enemy_image = pygame.image.load(enemy_image_path)
 
 # Objektide loomine
-player = Player(WIDTH // 2, HEIGHT - 80, player_image, bar)
+player = Player(WIDTH // 2, HEIGHT - 80, player_image, bar_image)
 
 # Kood, mis loob lauaobjektid ja edastab need vaenlasele
 tables = pygame.sprite.Group()
@@ -87,7 +90,7 @@ def scene_switcher(new_scene_name, screen=None):
         from main_menu import MainMenu
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
-        current_scene = GameLevel(scene_switcher, screen=screen)  # Edastame screen objekti
+        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
 
 # Põhifunktsioon
 def main():
