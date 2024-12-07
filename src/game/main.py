@@ -61,7 +61,7 @@ bar_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "ta
 bar_image = pygame.image.load(bar_image_path)
 
 # Mängija pildi määramine
-character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "teenindus.mees2.png")
+character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "idle.png")
 player_image = pygame.image.load(character_image_path)
 
 # Laadige vaenlase pilt enne objekti loomist

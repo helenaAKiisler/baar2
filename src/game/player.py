@@ -9,7 +9,9 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, image, bar):
         super().__init__()
         self.image = image
-        self.rect = self.image.get_rect(center=(x, y))
+        new_image = pygame.transform.scale(image, (64, 64))
+        self.image = new_image
+        self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.bar = bar

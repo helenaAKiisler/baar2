@@ -55,9 +55,8 @@ class GameLevel(Scene):
         self.sprites.add(self.bar)  # Lisa baar sprite gruppi
 
         # Mängija pildi määramine
-        character_image_path = os.path.join(self.base_path, "assets", "designs", "character", "mees", "teenindus.mees2.png")
+        character_image_path = os.path.join(self.base_path, "assets", "designs", "character", "mees", "idle.png")
         player_image = pygame.image.load(character_image_path)
-        self.rect = self.bar_image.get_rect()
 
         # Paigutame baari ekraani ülaosas keskele
         self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
