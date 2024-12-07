@@ -34,6 +34,10 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += move_x
         self.rect.y += move_y
 
+        # Kontrollime, et mängija ei liigu tumedale alale
+        if self.rect.top < 50:
+            self.rect.top = 50
+
         # Kontrollige, kas mängija ei lähe ekraanist välja
         if self.rect.left < 0:  # Mängija ei saa minna vasakule väljapoole
             self.rect.left = 0

@@ -254,6 +254,7 @@ class GameLevel(Scene):
         self.game_timer.draw_progress_bar(self.screen)
 
         # Kui mängija viib klaasi baari, siis annab see punkte
+
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):
             for glass in self.glasses:
                 if self.player.rect.colliderect(glass.rect):  # Kui klaas on baari peal
@@ -273,6 +274,10 @@ class GameLevel(Scene):
         for x in range(0, WIDTH, self.background_image.get_width()):
             for y in range(0, HEIGHT, self.background_image.get_height()):
                 screen.blit(self.background_image, (x, y))  # Taust kuvatakse mitmekordselt üle ekraani
+
+        # Tumeda ala lisamine punktide ja progress bar'i taustaks
+        dark_area_height = 50
+        pygame.draw.rect(screen, (0, 0, 0), (0, 0, WIDTH, dark_area_height))
 
         self.sprites.draw(screen)
         ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
@@ -295,7 +300,7 @@ class GameLevel(Scene):
             self.game_timer.draw_progress_bar(screen)
             ui.draw_score(screen, pygame.font.Font(None, 36), self.score)  # Kuvab skoori
 
-        # Quit nupp paigutatud paremasse nurgasse
+        # Quit nupp paigutatud paremasse nurka
         quit_button_position = (WIDTH - 250, HEIGHT - 70)
         self.quit_button.render(screen, quit_button_position)
 

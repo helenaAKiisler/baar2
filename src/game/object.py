@@ -13,7 +13,7 @@ class Bar(pygame.sprite.Sprite):
 
         # Paigutame baari ekraani ülaosas keskele
         self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
-        self.rect.y = 50  # Baar asub ekraani ülaservas, kuid natuke allpool
+        self.rect.y = 80 # Baar asub ekraani ülaservas, kuid natuke allpool
 
 class Table(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
@@ -68,6 +68,10 @@ class Enemy(pygame.sprite.Sprite):
         """Vaenlase liikumine ühesuunaliselt (näiteks paremale või vasakule)."""
         # Uus positsioon enne liikumist
         new_rect = self.rect.move(self.BASE_SPEED * self.direction, 0)
+
+        # Kontrollime, et vastane ei liiguks tumedale alale
+        if new_rect.top < 50:
+            self.direction *= -1
 
         # Kontrollime, kas uus positsioon ei kattu laudadega
         if not any(new_rect.colliderect(table.rect) for table in self.tables):
