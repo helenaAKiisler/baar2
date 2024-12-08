@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.bar = bar
-        self.BASE_SPEED = 100
+        self.BASE_SPEED = 80
 
     def handle_movement(self, keys, tables, delta):
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse ja baari tagumise ala vältimist."""

@@ -50,7 +50,7 @@ class Glass(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    BASE_SPEED = 3  # Muudame kiiruselõigu, et liikumine oleks sujuvam
+    BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
 
     def __init__(self, x, y, image, tables):
         super().__init__()
