@@ -48,12 +48,12 @@ class GameLevel(Scene):
         #self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
 
         # Baar
-        bar_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table.png")
+        bar_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "baar2.png")
         self.bar_image = pygame.image.load(bar_image_path)
         self.rect = self.bar_image.get_rect()
 
         # Baar objekti loomine
-        self.bar = Bar(200)
+        self.bar = Bar(self.bar_image, 288, 96)
         self.sprites.add(self.bar)  # Lisa baar sprite gruppi
 
         # Mängija pildi määramine
@@ -97,8 +97,8 @@ class GameLevel(Scene):
 
         # Defineeri kindlad kohad lauadeks (koordinaadid)
         predefined_table_positions = [
-            (100, 100), (250, 200), (400, 300), (500, 100), (500, 200),
-            (100, 450), (200, 550), (350, 450), (500, 600), (600, 500)
+            (466, 508), (80, 170), (272, 368), (466, 368), (272, 508),
+            (80, 322), (80, 472), (466, 226), (272, 226), (664, 320)
         ]
 
         # Paigutame lauad kindlatesse kohtadesse, kontrollides, et nad ei oleks liiga lähedal baari

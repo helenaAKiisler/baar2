@@ -55,10 +55,10 @@ table_image = pygame.image.load(table_image_path)
 #table_image = pygame.transform.scale(table_image, (64, 64))  # Scaling the table image
 
 # Baar
-bar = Bar(200)  # Baar, mille suurus määratakse
 # Muudame baari pildi kasutama laua pilti
-bar_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table.png")
+bar_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "baar2.png")
 bar_image = pygame.image.load(bar_image_path)
+bar = Bar(bar_image, 288, 96)
 
 # Mängija pildi määramine
 character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "idle.png")

@@ -4,16 +4,15 @@ from settings import GRAY,WIDTH
 
 
 class Bar(pygame.sprite.Sprite):
-    def __init__(self, width):
+    def __init__(self, image, width, height):
         super().__init__()
-
-        # Baar ei lae pilti, kuna pilt on määratud mainis
-        self.image = pygame.Surface((width, 50))  # Baar on laiem kui ekraani laius, kõrgus 50px
+        new_image = pygame.transform.scale(image, (width, height))
+        self.image = new_image
         self.rect = self.image.get_rect()
 
         # Paigutame baari ekraani ülaosas keskele
         self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
-        self.rect.y = 80 # Baar asub ekraani ülaservas, kuid natuke allpool
+        self.rect.y = 50 # Baar asub ekraani ülaservas, kuid natuke allpool
 
 class Table(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
