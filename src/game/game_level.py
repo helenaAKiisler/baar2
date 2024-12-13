@@ -97,8 +97,12 @@ class GameLevel(Scene):
 
         # Defineeri kindlad kohad lauadeks (koordinaadid)
         predefined_table_positions = [
-            (466, 508), (80, 170), (272, 368), (466, 368), (272, 508),
-            (80, 322), (80, 472), (466, 226), (272, 226), (664, 320)
+            (466, 508), (272, 226), (272, 368), (466, 368), (272, 508),
+            (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)
+        ]
+
+        predefined_enemy_positions = [
+            (144, 162), (144, 304), (596, 440), (726, 246)
         ]
 
         # Paigutame lauad kindlatesse kohtadesse, kontrollides, et nad ei oleks liiga lähedal baari
@@ -168,20 +172,19 @@ class GameLevel(Scene):
                     positions.append(glass.rect)
 
         # Lisame vaenlased, tagame, et nad ei saa tekkida lauadele
-        for _ in range(enemy_count):
+        for a in range(enemy_count):
             while True:
-                enemy_x = random.randint(50, WIDTH - 100)
-                enemy_y = random.randint(50, HEIGHT - 100)
-                enemy_rect = pygame.Rect(enemy_x, enemy_y, 50, 50)  # Vaenlase suurus
+                enemy_x, enemy_y = predefined_enemy_positions[a]
+                enemy_rect = pygame.Rect(enemy_x, enemy_y, 60, 60)  # Vaenlase suurus
 
                 # Kontrollime, kas vaenlase koht ei kattu lauaga
                 if not any(enemy_rect.colliderect(table.rect) for table in self.tables):
                     break  # Kui vaenlane ei kattu lauaga, siis paigutame ta
 
             # Kui koht on leitud, loome vaenlase ja lisame selle
-            self.enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
-            self.enemies.add(self.enemy)
-            self.sprites.add(self.enemy)
+            enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
+            self.enemies.add(enemy)
+            self.sprites.add(enemy)
 
         for glass in self.glasses:
             print(f"Klaas loodud asukohas: {glass.rect}")
