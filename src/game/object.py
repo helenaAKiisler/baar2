@@ -36,7 +36,7 @@ class Glass(pygame.sprite.Sprite):
         self.points = points  # Klaasi punktiväärtus
 
     def draw(self, screen):
-        screen.blit(new_image, self.rect)  # Joonistame klaasi ekraanile
+        screen.blit(self.image, self.rect)  # Joonistame klaasi ekraanile
 
     def check_pickup(self, player, score):
         # laiendan klaasi üleskorjamis/kokkupõrke ala
@@ -67,10 +67,6 @@ class Enemy(pygame.sprite.Sprite):
         """Vaenlase liikumine ühesuunaliselt (näiteks paremale või vasakule)."""
         # Uus positsioon enne liikumist
         new_rect = self.rect.move(self.BASE_SPEED * self.direction, 0)
-
-        # Kontrollime, et vastane ei liiguks tumedale alale
-        if new_rect.top < 50:
-            self.direction *= -1
 
         # Kontrollime, kas uus positsioon ei kattu laudadega
         if not any(new_rect.colliderect(table.rect) for table in self.tables):

@@ -42,11 +42,6 @@ class GameLevel(Scene):
         self.background_image = pygame.image.load(self.background_image_path)
         self.background_image = pygame.transform.scale(self.background_image,(WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
 
-        # Laadige laua pilt (laud2.png)
-        #table_image_path = os.path.join(self.base_path, "assets", "designs", "table", "laud2.png")
-        #table_image = pygame.image.load(table_image_path)
-        #self.table_image = pygame.transform.scale(self.table_image, (130, 130))  # Scaling the table image
-
         # Baar
         bar_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "baar2.png")
         self.bar_image = pygame.image.load(bar_image_path)
@@ -73,7 +68,7 @@ class GameLevel(Scene):
         enemy_image = pygame.image.load(enemy_image_path)  # Laadige pilt
 
         # Loome vaenlase, edastades pildi
-        self.enemy = Enemy(random.randint(50, WIDTH - 100), random.randint(50, HEIGHT - 100), enemy_image, self.tables)
+        self.enemy = Enemy(64, 64, enemy_image, self.tables)
 
         # Pausi seaded
         self.paused = False
