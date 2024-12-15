@@ -73,7 +73,6 @@ class Enemy(pygame.sprite.Sprite):
             self.direction = "left"
             self.animation_count = 0
 
-
     def draw(self, surface):
         """Joonistab vaenlase ekraanile."""
         surface.blit(self.image, self.rect)
@@ -142,7 +141,7 @@ class Player(pygame.sprite.Sprite):
     def update_sprite(self):
         sprite_sheet = "idle"
         #if self.collect:
-        #    sprite_sheet = "collect"
+        # sprite_sheet = "collect"
         if self.x_vel != 0:
             sprite_sheet = "walk"
 
@@ -187,9 +186,9 @@ class Player(pygame.sprite.Sprite):
         """Joonistab mängija ekraanile."""
         surface.blit(self.sprite, (self.rect.x, self.rect.y))
 
-#    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
+# pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
 
-#    pygame.display.flip()
+# pygame.display.flip()
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, color, points):
         super().__init__()

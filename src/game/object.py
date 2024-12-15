@@ -2,7 +2,6 @@
 import pygame
 from settings import GRAY,WIDTH
 
-
 class Bar(pygame.sprite.Sprite):
     def __init__(self, image, width, height):
         super().__init__()
@@ -26,7 +25,6 @@ class Table(pygame.sprite.Sprite):
     def draw(self, screen):
         pygame.draw.rect(screen, GRAY, self.rect)
 
-
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, image, points):
         super().__init__()
@@ -47,7 +45,6 @@ class Glass(pygame.sprite.Sprite):
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
 
-
 class Enemy(pygame.sprite.Sprite):
     BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
 
@@ -58,6 +55,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
+        self.paused = False  # Lisame pausiseisundi atribuudi
 
         # Liikumise algsuund (paremale)
         self.direction = 1  # 1 tähendab paremale, -1 vasakule
@@ -65,15 +63,17 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         """Vaenlase liikumine ühesuunaliselt (näiteks paremale või vasakule)."""
+        if self.paused:
+            return  # Peatame liikumise, kui mäng on pausil
+
         # Uus positsioon enne liikumist
         new_rect = self.rect.move(self.BASE_SPEED * self.direction, 0)
 
-        # Kontrollime, kas uus positsioon ei kattu laudadega
-        if not any(new_rect.colliderect(table.rect) for table in self.tables):
-            self.rect = new_rect  # Lubame liikumise ainult siis, kui ei kattu laudadega
-        else:
-            # Kui vaenlane puutub kokku lauaga, muudame liikumissuunda
-            self.direction *= -1  # Keerame ümber (liikumine vastassuunas)
+        # Kontrolli, kas uus positsioon on ekraani sees
+        if new_rect.right >= WIDTH or new_rect.left <= 0:
+            self.direction *= -1  # Muuda suunda
+
+        self.rect = new_rect
 
         # Kui vaenlane jõuab ekraani äärde, muudame liikumissuunda
         if self.rect.right >= pygame.display.get_surface().get_width():
@@ -83,3 +83,4 @@ class Enemy(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
