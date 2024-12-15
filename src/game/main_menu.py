@@ -19,11 +19,6 @@ class MainMenu(Scene):
 
     # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Kui vajutatakse P nuppu
-                self.toggle_pause()  # Lülitame pausi sisse või välja
-            elif event.key == pygame.K_q:  # Kui vajutatakse Q nuppu
-                self.scene_switcher("MainMenu", self.screen)  # Kui vajutatakse Q, siis läheme tagasi MainMenu
 
         # Kontrollige nuppe
         self.start_button.handle_events(event)

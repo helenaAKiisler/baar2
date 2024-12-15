@@ -108,15 +108,9 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:  # Pausile minek või pausilt naasmine
-                    game.toggle_pause()
-                    game_timer.toggle_pause()
-                elif event.key == pygame.K_q: #Mängu sulgemine
+                if event.key == pygame.K_q: #Mängu sulgemine
                     pygame.quit()
                     sys.exit()
-                elif event.key == pygame.K_c and game.is_paused: #Mängu pausile panek
-                    game.toggle_pause()
-                    game_timer.toggle_pause()
 
             current_scene.handle_events(event)  # Kontrollime sündmusi (ka nupu vajutamist)
 
