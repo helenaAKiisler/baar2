@@ -19,8 +19,6 @@ class GameLevel(Scene):
         self.base_path = base_path
         self.level = level
         self.is_running = True
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
-        self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
         self.score = 0
         self.carried_glasses = 0
         self.max_glasses = 3
@@ -64,21 +62,17 @@ class GameLevel(Scene):
         self.player = Player(WIDTH // 2, HEIGHT - 80, player_image, self.bar)
         self.sprites.add(self.player)
 
-        # Laadige vaenlase pilt enne objekti loomist
-        enemy_image_path = os.path.join(self.base_path, "assets", "designs", "customer", "klient1.png")
-        enemy_image = pygame.image.load(enemy_image_path)  # Laadige pilt
-
-        # Loome vaenlase, edastades pildi
-        self.enemy = Enemy(64, 64, enemy_image, self.tables)
 
         # Pausi seaded
-        self.paused = False
+        self.is_paused = False
         self.game_timer = GameTimer()
-        self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
 
         self.time_up = False  # Lisame oleku, et jälgida, kas aeg on otsas
-        self.start_again_button = ui.Button("Start Again", on_pressed=self.restart_level)
+        self.restart_button = ui.Button("Try Again", on_pressed=self.restart_level)
         self.quit_button_time_up = ui.Button("Quit", on_pressed=self.quit_game)
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
+        self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
+        self.pause_button = ui.Button("Pause", on_pressed=self.pause_game)
 
         # Startides ei ole nupp nähtav
         self.continue_button.visible = False
@@ -148,15 +142,11 @@ class GameLevel(Scene):
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
                     x_offset = table_centerx - glass_width - 5  # Väike kaugus vasakule
-                    y_offset = table_centery - (glass_height // 2)  # Keskendub vertikaalselt
-                elif i == 1:
-                    # Teine klaas paigutatakse laua keskmesse
-                    x_offset = table_centerx - (glass_width // 2)  # Keskendab klaasi laua keskosas
-                    y_offset = table_centery - (glass_height // 2)  # Keskendab klaasi laua keskosas
+                    y_offset = table_centery - 15
                 else:
-                    # Kolmas klaas paigutatakse laua paremale küljele
-                    x_offset = table_centerx + 5  # Väike kaugus paremale
-                    y_offset = table_centery - (glass_height // 2)  # Keskendub vertikaalselt
+                    # Teine klaas paigutatakse laua paremale küljele
+                    x_offset = table_centerx + 5
+                    y_offset = table_centery - 15
 
                 # Kontrollime, et klaasi positsioon ei kattu teiste klaasidega
                 glass_rect = pygame.Rect(x_offset, y_offset, glass_width, glass_height)
@@ -192,43 +182,36 @@ class GameLevel(Scene):
             if self.score >= self.win_points:
                 self.check_win_condition()
             else:
-                self.start_again_button.handle_events(event)
+                self.restart_button.handle_events(event)
                 self.quit_button_time_up.handle_events(event)
             return
 
+        if self.is_paused:  # Only handle pause-related events
+            self.continue_button.handle_events(event)
+            self.quit_button.handle_events(event)
+            return
+
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Kui vajutatakse P, siis lülitame pausi sisse või välja
-                self.toggle_pause()
-            elif event.key == pygame.K_q:  # Kui vajutatakse Q nuppu, siis viige tagasi MainMenu
+            if event.key == pygame.K_q:  # Kui vajutatakse Q nuppu, siis viige tagasi MainMenu
                 self.scene_switcher("MainMenu", self.screen)
-
-        if event.type == pygame.MOUSEBUTTONDOWN:  # Kui vajutatakse hiirega nupp
-            if self.quit_button.rect.collidepoint(event.pos):  # Kui vajutatakse Quit nuppu
-                self.quit_game()
-            if self.continue_button.rect.collidepoint(event.pos):  # Kui vajutatakse Continue nuppu
-                self.continue_game()
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Lülitame pausi sisse või välja
-                self.toggle_pause()
             elif event.key == pygame.K_x:  # Klaasi korjamine
                 print(f"Mängija asukoht ja suurus: {self.player.rect}")
                 self.pick_up_glass()
+            elif event.key == pygame.K_p:
+                self.pause_game()
+
         if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.pause_button.rect.collidepoint(event.pos):  # Pause button clicked
+                self.pause_game()
             if self.waiting_to_place_glasses and event.button == 1:
                 self.place_glasses_in_bar()
 
-    def toggle_pause(self):
-        """Lülitab pausi sisse ja välja."""
-        if self.paused:
-            self.resume_game()
-        else:
-            self.pause_game()
-
     def pause_game(self):
         """Pausib mängu ja kuvab 'Continue' nupu."""
-        self.paused = True
-        self.continue_button.visible = True  # Kuvab 'Continue' nupu
+        if self.is_paused == False:
+            self.is_paused = True
+            self.continue_button.visible = True  # Kuvab 'Continue' nupu
+            self.game_timer.pause()
 
         # Loome läbipaistva musta kihi ekraanile, et teha ekraan udune
         overlay = pygame.Surface((WIDTH, HEIGHT))
@@ -236,22 +219,13 @@ class GameLevel(Scene):
         overlay.fill((0, 0, 0))  # Fill with black color for the blur effect
         self.screen.blit(overlay, (0, 0))  # Render the overlay to the screen
 
-    def show_continue_button(self):
-        self.continue_button.visible = True
-
-    def hide_continue_button(self):
-        self.continue_button.visible = False
-
     def resume_game(self):
         """Taaskäivitab mängu pärast pausi."""
-        self.paused = False
-        self.continue_button.visible = False  # Peidab 'Continue' nupu
+        if self.is_paused == True:
+            self.is_paused = False
+            self.continue_button.visible = False  # Peidab 'Continue' nupu
+            self.game_timer.resume()  # Taaskäivitab mängu ajamõõdiku
 
-    def continue_game(self):
-        """Jätkab mängu pärast pausi."""
-        self.paused = False
-        self.continue_button.is_visible = False  # Peidab 'Continue' nupu
-        self.game_timer.resume()  # Taaskäivitab mängu ajamõõdiku
 
     def render(self, screen):
         # Kuvame taustapildi mitmekordistamise, et katta kogu ekraan
@@ -268,7 +242,7 @@ class GameLevel(Scene):
         self.game_timer.draw_progress_bar(screen)
 
         # Kui mäng on pausil, kuvatakse must ekraan ja 'Continue' nupp
-        if self.paused:
+        if self.is_paused:
             # Must taust ja overlay
             overlay = pygame.Surface((WIDTH, HEIGHT))
             overlay.set_alpha(150)  # Läbipaistev must kiht
@@ -279,13 +253,10 @@ class GameLevel(Scene):
             continue_button_position = (
             WIDTH // 2 - self.continue_button.rect.width // 2, HEIGHT // 2 - self.continue_button.rect.height // 2)
             self.continue_button.render(screen, continue_button_position)
-        else:
-            # Joonista mängu tavaline ekraan
-            self.sprites.draw(screen)
-            self.game_timer.draw_progress_bar(screen)
-            ui.draw_score(screen, pygame.font.Font(None, 36), self.score)  # Kuvab skoori
+            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 + 50)
+            self.quit_button.render(screen, quit_button_position)
 
-        if self.time_up:
+        elif self.time_up:
             if self.score >= self.win_points:
                 self.check_win_condition()
             else:
@@ -296,16 +267,16 @@ class GameLevel(Scene):
                 screen.blit(overlay, (0, 0))
 
                 font = pygame.font.Font(None, 72)
-                text = font.render("Time is up!", True, (255, 0, 0))
+                text = font.render("Time is up! You lost", True, (255, 0, 0))
                 screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
 
                 # Nuppude kuvamine
-                self.start_again_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
+                self.restart_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
                 self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))
         else:
             # Kuvame Quit nuppu ainult siis, kui aeg pole otsas
-            quit_button_position = (WIDTH - 250, HEIGHT - 70)
-            self.quit_button.render(screen, quit_button_position)
+            pause_button_position = (WIDTH - 250, HEIGHT - 70)
+            self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):
         """Käivitab leveli uuesti algusest."""
@@ -374,10 +345,12 @@ class GameLevel(Scene):
 
     def update(self):
         """Uuendab leveli seisundit."""
+        if self.is_paused:
+            return
         if self.game_timer.is_time_up():
             self.time_up = True  # Märgime, et aeg on läbi
             return
-        if not self.paused and not self.time_up:
+        if not self.is_paused and not self.time_up:
             delta = self.game_timer.get_delta_time()  # Arvutame aja muutuse
             keys = pygame.key.get_pressed()
             self.player.handle_movement(keys, self.tables, delta)

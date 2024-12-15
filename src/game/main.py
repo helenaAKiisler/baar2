@@ -107,10 +107,6 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q: #Mängu sulgemine
-                    pygame.quit()
-                    sys.exit()
 
             current_scene.handle_events(event)  # Kontrollime sündmusi (ka nupu vajutamist)
 

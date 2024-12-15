@@ -38,39 +38,34 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += move_x
         self.rect.y += move_y
 
-        # Kontrollime, et mängija ei liigu tumedale alale
-        if self.rect.top < 50:
-            self.rect.top = 50
 
         # Kontrollige, kas mängija ei lähe ekraanist välja
         if self.rect.left < 0:  # Mängija ei saa minna vasakule väljapoole
             self.rect.left = 0
         if self.rect.right > WIDTH:  # Mängija ei saa minna paremale väljapoole
             self.rect.right = WIDTH
-        if self.rect.top < 0:  # Mängija ei saa minna ülespoole väljapoole
-            self.rect.top = 0
+        if self.rect.top < 50:  # Kontrollime, et mängija ei liigu tumedale alale
+            self.rect.top = 50
         if self.rect.bottom > HEIGHT:  # Mängija ei saa minna allapoole väljapoole
             self.rect.bottom = HEIGHT
 
         # Kontrollime, kas mängija puutub kokku baariga
         if self.rect.colliderect(self.bar.rect):
-            # Kui mängija liigub baari taha (üles- või allapoole), piirame liikumist
-            if self.rect.top < self.bar.rect.bottom and move_y < 0:  # Ei saa minna baari taha ülevalt
+            # Kui mängija liigub baari taha altpoolt, piirame liikumist
+            if self.rect.top < self.bar.rect.bottom and move_y < 0:  # Ei saa minna baari taha alt
                 self.rect.top = self.bar.rect.bottom
-            if self.rect.bottom > self.bar.rect.top and move_y > 0:  # Ei saa minna baari taha altpoolt
-                self.rect.bottom = self.bar.rect.top
 
         # Kontrollib kokkupõrkeid iga lauaga ja tühistab liikumise, kui on kokkupõrge
         for table in tables:
             if self.rect.colliderect(table.rect):
-                if move_x > 0:  # Mängija liigub paremale, siis peata liikumine paremale
-                    self.rect.right = table.rect.left
-                if move_x < 0:  # Mängija liigub vasakule, siis peata liikumine vasakule
-                    self.rect.left = table.rect.right
-                if move_y > 0:  # Mängija liigub alla, siis peata liikumine alla
-                    self.rect.bottom = table.rect.top
-                if move_y < 0:  # Mängija liigub ülespoole, siis peata liikumine üles
-                    self.rect.top = table.rect.bottom
+                if move_x > 0:  # Paremale liikumine
+                    self.rect.right = min(self.rect.right, table.rect.left)
+                elif move_x < 0:  # Vasakule liikumine
+                    self.rect.left = max(self.rect.left, table.rect.right)
+                if move_y > 0:  # Alla liikumine
+                    self.rect.bottom = min(self.rect.bottom, table.rect.top)
+                elif move_y < 0:  # Ülespoole liikumine
+                    self.rect.top = max(self.rect.top, table.rect.bottom)
 
     def update_direction(self, direction):
         if self.direction != direction:
