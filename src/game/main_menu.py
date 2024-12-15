@@ -42,3 +42,34 @@ class MainMenu(Scene):
 
     def toggle_pause(self):
         pass
+
+class WinMenu(Scene):
+    BACKGROUND_COLOR = pygame.Color(0, 0, 0)
+
+    def __init__(self, scene_switcher, text, screen=None):
+        super().__init__(scene_switcher)
+        self.screen = screen
+        self.text = text
+        self.restart_button = ui.Button("Play again", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis viib tagasi MainMenu
+
+    # Siin töötleme sündmusi (ka nuppude vajutamist).
+    def handle_events(self, event):
+
+        # Kontrollige nuppe
+        self.restart_button.handle_events(event)
+        self.quit_button.handle_events(event)
+    # Nuppude paigutamine ekraanile
+    def render(self, screen):
+        screen.fill(self.BACKGROUND_COLOR)
+        self.restart_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))  # Paigutame Restart nupu
+        self.quit_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))  # Paigutame Quit nupu
+        win_text = pygame.font.Font(None, 48).render(self.text, True, (255, 255, 255))
+        screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, HEIGHT // 3))
+
+    def quit_game(self):
+        pygame.quit()
+        sys.exit()
+
+    def toggle_pause(self):
+        pass

@@ -24,7 +24,7 @@ from object import Glass, Table, Enemy, Bar
 from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
-from main_menu import MainMenu
+from main_menu import MainMenu, WinMenu
 
 # Algseaded
 pygame.init()
@@ -91,6 +91,8 @@ def scene_switcher(new_scene_name, screen=None):
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
         current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
+    elif new_scene_name == "WinMenu":
+        current_scene = WinMenu(scene_switcher, text="You won!", screen=screen)
 
 # Põhifunktsioon
 def main():

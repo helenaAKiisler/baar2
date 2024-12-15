@@ -4,7 +4,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 from settings import WIDTH, HEIGHT, BLACK, GRAY
-#from src.game.main import player
 
 PLAYER_VEL = 5
 

@@ -8,14 +8,14 @@ bar = Bar
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, image, bar):
         super().__init__()
-        self.image = image
-        new_image = pygame.transform.scale(image, (64, 64))
-        self.image = new_image
+        self.new_image = pygame.transform.scale(image, (64, 64))
+        self.image = self.new_image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.bar = bar
         self.BASE_SPEED = 80
+        self.direction = "right"
 
     def handle_movement(self, keys, tables, delta):
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse ja baari tagumise ala vältimist."""
@@ -29,8 +29,10 @@ class Player(pygame.sprite.Sprite):
             move_y = self.BASE_SPEED * delta
         if keys[pygame.K_LEFT] or keys[pygame.K_a] > 0:  # Vasakule liikumine
             move_x = -self.BASE_SPEED * delta
+            self.update_direction("left")
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:  # Paremale liikumine
             move_x = self.BASE_SPEED * delta
+            self.update_direction("right")
 
         # Liigutame vastavalt arvutatud väärtusele
         self.rect.x += move_x
@@ -70,9 +72,16 @@ class Player(pygame.sprite.Sprite):
                 if move_y < 0:  # Mängija liigub ülespoole, siis peata liikumine üles
                     self.rect.top = table.rect.bottom
 
+    def update_direction(self, direction):
+        if self.direction != direction:
+            self.direction = direction
+            flip_x = direction == "left"
+            self.image = pygame.transform.flip(self.new_image, flip_x, False)
+
     # Joonistab mängija ekraanile
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
 
 #    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
 

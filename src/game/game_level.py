@@ -26,6 +26,7 @@ class GameLevel(Scene):
         self.max_glasses = 3
         self.waiting_to_place_glasses = False
         self.collected_glasses = []
+        self.win_points = 15
 
         # Määrame baasi tee (base_path) kõigis meetodites kasutamiseks
         self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -188,8 +189,11 @@ class GameLevel(Scene):
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
         if self.time_up:
-            self.start_again_button.handle_events(event)
-            self.quit_button_time_up.handle_events(event)
+            if self.score >= self.win_points:
+                self.check_win_condition()
+            else:
+                self.start_again_button.handle_events(event)
+                self.quit_button_time_up.handle_events(event)
             return
 
         if event.type == pygame.KEYDOWN:
@@ -282,19 +286,22 @@ class GameLevel(Scene):
             ui.draw_score(screen, pygame.font.Font(None, 36), self.score)  # Kuvab skoori
 
         if self.time_up:
-            # "Aeg läbi" ekraan
-            overlay = pygame.Surface((WIDTH, HEIGHT))
-            overlay.set_alpha(150)
-            overlay.fill((0, 0, 0))
-            screen.blit(overlay, (0, 0))
+            if self.score >= self.win_points:
+                self.check_win_condition()
+            else:
+                # "Aeg läbi" ekraan
+                overlay = pygame.Surface((WIDTH, HEIGHT))
+                overlay.set_alpha(150)
+                overlay.fill((0, 0, 0))
+                screen.blit(overlay, (0, 0))
 
-            font = pygame.font.Font(None, 72)
-            text = font.render("Time is up!", True, (255, 0, 0))
-            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
+                font = pygame.font.Font(None, 72)
+                text = font.render("Time is up!", True, (255, 0, 0))
+                screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
 
-            # Nuppude kuvamine
-            self.start_again_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
-            self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))
+                # Nuppude kuvamine
+                self.start_again_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
+                self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))
         else:
             # Kuvame Quit nuppu ainult siis, kui aeg pole otsas
             quit_button_position = (WIDTH - 250, HEIGHT - 70)
@@ -339,7 +346,7 @@ class GameLevel(Scene):
         for i, glass in enumerate(self.collected_glasses):
             if i < len(x_offsets):
                 glass.rect.centerx = bar_centerx + x_offsets[i]
-                glass.rect.y = bar_top + 10  # Paigutame klaasid musta ala peale
+                glass.rect.y = bar_top + 20  # Paigutame klaasid musta ala peale
                 self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
             else:
                 print("Liiga palju klaase korraga, paigutus ebaõnnestus.")
@@ -376,11 +383,11 @@ class GameLevel(Scene):
             self.player.handle_movement(keys, self.tables, delta)
             self.enemies.update()
             self.check_collisions()
-            self.check_win_condition()
 
         # Käsitleme mängija liikumist
         keys = pygame.key.get_pressed()  # Kontrollime, milliseid nuppe on vajutatud
         self.player.handle_movement(keys, self.tables, delta)  # Kutsume liikumise funktsiooni
+        self.player.update()
 
         # Uuendame vaenlasi ja kontrollime kokkupõrkeid
         self.enemies.update()
@@ -397,5 +404,5 @@ class GameLevel(Scene):
             self.waiting_to_place_glasses = True
 
     def check_win_condition(self):
-        """Kontrollib, kas mängija on võitnud taseme."""
-        pass
+        if self.time_up:
+            self.scene_switcher("WinMenu", self.screen)
