@@ -12,6 +12,7 @@ class MainMenu(Scene):
         super().__init__(scene_switcher)
         self.game_title = game_title
         self.screen = screen
+        self.paused = False
         # Start nupp
         self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
         # Quit nupp
@@ -20,14 +21,12 @@ class MainMenu(Scene):
     # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Kui vajutatakse P nuppu
-                self.toggle_pause()  # Lülitame pausi sisse või välja
-            elif event.key == pygame.K_q:  # Kui vajutatakse Q nuppu
-                self.scene_switcher("MainMenu", self.screen)  # Kui vajutatakse Q, siis läheme tagasi MainMenu
+            if event.key == pygame.K_q:
+                self.scene_switcher("MainMenu", self.screen)
 
-        # Kontrollige nuppe
         self.start_button.handle_events(event)
         self.quit_button.handle_events(event)
+
     # Nuppude paigutamine ekraanile
     def render(self, screen):
         screen.fill(self.BACKGROUND_COLOR)
@@ -39,6 +38,3 @@ class MainMenu(Scene):
     def quit_game(self):
         pygame.quit()
         sys.exit()
-
-    def toggle_pause(self):
-        pass

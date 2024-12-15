@@ -13,11 +13,9 @@ BUTTON_PADDING = 15
 
 FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
-
 def initialize_font():
     global FONT
     FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
-
 
 class Button:
     def __init__(self, text, on_pressed):

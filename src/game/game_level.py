@@ -10,7 +10,6 @@ from src.game.main import enemy_image
 from main import table_image, bar_image
 from settings import WIDTH, HEIGHT
 
-
 class GameLevel(Scene):
 
     def __init__(self, scene_switcher, screen, base_path, level=1):
@@ -184,9 +183,10 @@ class GameLevel(Scene):
         for glass in self.glasses:
             print(f"Klaas loodud asukohas: {glass.rect}")
 
-
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
+        pygame.event.pump()
+
         if self.time_up:
             self.start_again_button.handle_events(event)
             self.quit_button_time_up.handle_events(event)
@@ -202,24 +202,18 @@ class GameLevel(Scene):
             if self.quit_button.rect.collidepoint(event.pos):  # Kui vajutatakse Quit nuppu
                 self.quit_game()
             if self.continue_button.rect.collidepoint(event.pos):  # Kui vajutatakse Continue nuppu
-                self.continue_game()
-
+                self.resume_game()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  # Lülitame pausi sisse või välja
-                self.toggle_pause()
-            elif event.key == pygame.K_x:  # Klaasi korjamine
-                print(f"Mängija asukoht ja suurus: {self.player.rect}")
+            if event.key == pygame.K_x:  # Klaasi korjamine
                 self.pick_up_glass()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.waiting_to_place_glasses and event.button == 1:
                 self.place_glasses_in_bar()
 
     def toggle_pause(self):
-        """Lülitab pausi sisse ja välja."""
-        if self.paused:
-            self.resume_game()
-        else:
-            self.pause_game()
+        """Lülitab mängu pausile või pausilt välja."""
+        self.paused = not self.paused
+        self.game_timer.toggle_pause()
 
     def pause_game(self):
         """Pausib mängu ja kuvab 'Continue' nupu."""
@@ -234,20 +228,22 @@ class GameLevel(Scene):
 
     def show_continue_button(self):
         self.continue_button.visible = True
-
     def hide_continue_button(self):
         self.continue_button.visible = False
 
     def resume_game(self):
         """Taaskäivitab mängu pärast pausi."""
         self.paused = False
-        self.continue_button.visible = False  # Peidab 'Continue' nupu
+        self.game_timer.resume()
+        self.continue_button.visible = False
 
-    def continue_game(self):
-        """Jätkab mängu pärast pausi."""
-        self.paused = False
-        self.continue_button.is_visible = False  # Peidab 'Continue' nupu
-        self.game_timer.resume()  # Taaskäivitab mängu ajamõõdiku
+        # Lähtesta mängu põhiseisund
+        from pohiloogika import Game
+        Game.is_paused = False
+
+        self.player.paused = False
+        for enemy in self.enemies:
+            enemy.paused = False
 
     def render(self, screen):
         # Kuvame taustapildi mitmekordistamise, et katta kogu ekraan
@@ -306,7 +302,6 @@ class GameLevel(Scene):
 
     def quit_game(self):
         """Mängu lõpetamine või MainMenu-le naasmine"""
-        from main_menu import MainMenu  # Liiguta impordi siin, et vältida tsüklilist importimist
         self.scene_switcher("MainMenu", self.screen)
 
     def pick_up_glass(self):
@@ -370,27 +365,23 @@ class GameLevel(Scene):
         if self.game_timer.is_time_up():
             self.time_up = True  # Märgime, et aeg on läbi
             return
+
+        delta = self.game_timer.get_delta_time()  # Arvuta delta alati, kui mäng pole pausil
+
         if not self.paused and not self.time_up:
-            delta = self.game_timer.get_delta_time()  # Arvutame aja muutuse
+            pygame.event.pump()
             keys = pygame.key.get_pressed()
             self.player.handle_movement(keys, self.tables, delta)
             self.enemies.update()
             self.check_collisions()
             self.check_win_condition()
 
-        # Käsitleme mängija liikumist
-        keys = pygame.key.get_pressed()  # Kontrollime, milliseid nuppe on vajutatud
-        self.player.handle_movement(keys, self.tables, delta)  # Kutsume liikumise funktsiooni
-
-        # Uuendame vaenlasi ja kontrollime kokkupõrkeid
-        self.enemies.update()
+        # Pausi ajal progressiriba ei täitu edasi
+        self.game_timer.draw_progress_bar(self.screen)
 
         # Kontrollime kokkupõrkeid ja võidutingimusi
         self.check_collisions()
         self.check_win_condition()
-
-        # Pausi ajal progressiriba ei täitu edasi
-        self.game_timer.draw_progress_bar(self.screen)
 
         # Kontrollime, kas mängija on baari juures ja kannab 3 klaasi
         if self.carried_glasses > 0 and self.player.rect.colliderect(self.bar.rect):

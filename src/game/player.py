@@ -16,20 +16,24 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = y
         self.bar = bar
         self.BASE_SPEED = 80
+        self.paused = False  # Lisame pausiseisundi atribuudi
 
     def handle_movement(self, keys, tables, delta):
         """Käsitleb mängija liikumist ja kontrollib kokkupõrkeid laudadesse ja baari tagumise ala vältimist."""
+        if self.paused:
+            return  # Peatame liikumise, kui mängija on pausil
+
         move_x = 0
         move_y = 0
 
         # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
-        if keys[pygame.K_UP] or keys[pygame.K_w] > 0:  # Ülespoole liikumine
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             move_y = -self.BASE_SPEED * delta
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:  # Allapoole liikumine
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             move_y = self.BASE_SPEED * delta
-        if keys[pygame.K_LEFT] or keys[pygame.K_a] > 0:  # Vasakule liikumine
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             move_x = -self.BASE_SPEED * delta
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:  # Paremale liikumine
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             move_x = self.BASE_SPEED * delta
 
         # Liigutame vastavalt arvutatud väärtusele
@@ -39,6 +43,7 @@ class Player(pygame.sprite.Sprite):
         # Kontrollime, et mängija ei liigu tumedale alale
         if self.rect.top < 50:
             self.rect.top = 50
+
 
         # Kontrollige, kas mängija ei lähe ekraanist välja
         if self.rect.left < 0:  # Mängija ei saa minna vasakule väljapoole
@@ -74,6 +79,7 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-#    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
+# pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
 
-#    pygame.display.flip()
+# pygame.display.flip()
+

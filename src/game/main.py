@@ -91,6 +91,8 @@ def scene_switcher(new_scene_name, screen=None):
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
         current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
+    if not game.is_paused or current_scene.paused == False:
+        current_scene.update()  # Uuendab mängu loogikat, kui mäng pole pausil või stseeni paus on lõppenud
 
 # Põhifunktsioon
 def main():
@@ -108,17 +110,13 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:  # Pausile minek või pausilt naasmine
                     game.toggle_pause()
-                    game_timer.toggle_pause()
-                elif event.key == pygame.K_q: #Mängu sulgemine
-                    pygame.quit()
-                    sys.exit()
-                elif event.key == pygame.K_c and game.is_paused: #Mängu pausile panek
-                    game.toggle_pause()
-                    game_timer.toggle_pause()
 
             current_scene.handle_events(event)  # Kontrollime sündmusi (ka nupu vajutamist)
 
-        current_scene.update()  # Uuendab mänguloogikat, sealhulgas mängija liikumist
+        # Kontrollime, kas current_scene'il on paused atribuut ja kas mäng pole pausil
+        if not game.is_paused and getattr(current_scene, 'paused', False) == False:
+            current_scene.update()  # Uuendab mängu loogikat, kui mäng ja stseen pole pausil
+
         current_scene.render(screen)  # Edastame screen objekti
         pygame.display.flip()
         pygame.time.Clock().tick(60)

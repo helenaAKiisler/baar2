@@ -17,15 +17,13 @@ class Game:
     def toggle_pause(self):
         """Lülitab mängu pausile või pausilt välja."""
         self.is_paused = not self.is_paused
-        if self.is_paused:
-            self.game_timer.toggle_pause()  # Peatame ajamõõdiku täitumise
-        else:
-            self.game_timer.toggle_pause()  # Jätkame ajamõõdiku täitumist
+        self.game_timer.toggle_pause()
 
     def quit_game(self):
         """Lõpetab mängu ja sulgeb akna."""
         pygame.quit()
         sys.exit()
+
 
 
 
