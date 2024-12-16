@@ -1,7 +1,7 @@
 # Fonti initseerimine ja nuppude klass, mis sätestab ära erinevad nupud mängus.
 
 import pygame
-from settings import buttons, buttons_pressed, button_path, OFF_WHITE
+from settings import button_path, OFF_WHITE
 from os import listdir
 from os.path import isfile, join
 from typing import Callable

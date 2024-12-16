@@ -38,7 +38,7 @@ predefined_table_positions = [
         ]
 
 predefined_enemy_positions = [
-            (144, 162), (144, 304), (596, 440), (726, 246)
+            (144, 162), (144, 304), (596, 444), (726, 246)
         ]
 
 glass_types = [
@@ -47,6 +47,5 @@ glass_types = [
             {"image": load(join(base_path, "glass", "uusmartini.png")),"points": 3}
         ]
 
-buttons = ["Continue.png", "Pause.png", "Play_again.png", "Quit.png", "Start.png", "Try_again.png"]
-buttons_pressed = ["Continue_pressed.png", "Pause_pressed.png", "Play_again_pressed.png", "Quit_pressed.png", "Start_pressed.png", "Try_again_pressed.png"]
+
 button_path = abspath(join(dirname(__file__), "..", "..", "assets", "designs", "buttons"))

@@ -247,7 +247,7 @@ class GameLevel(Scene):
         bar_x = self.bar.rect.left
         bar_top = self.bar.rect.top
 
-        x_offsets = [15, 15, 15, 15]
+        x_offsets = [18, 18, 18, 18]
 
         for i, glass in enumerate(self.collected_glasses):
             if len(self.placed_glasses) == 0:
