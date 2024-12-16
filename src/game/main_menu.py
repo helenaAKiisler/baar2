@@ -51,7 +51,7 @@ class WinMenu(Scene):
         super().__init__(scene_switcher)
         self.screen = screen
         self.text = text
-        self.restart_button = ui.Button("Play again", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
+        self.restart_button = ui.Button("Play_again", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 
     # Siin töötleme sündmusi (ka nuppude vajutamist).
