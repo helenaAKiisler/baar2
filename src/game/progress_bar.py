@@ -1,16 +1,19 @@
 # Määrab ära progressiriba ja selle muutumise mängu alustamisel pausile minekul ja lõpetamisel.
 import time
 import pygame
-from settings import GAME_DURATION, WHITE, GREEN
+from settings import WHITE, GREEN, BASE_GAME_DURATION
 
 class GameTimer:
-    def __init__(self):
+    def __init__(self, duration):
         self.start_time = time.time()  # Mängu algusaeg
         self.paused = False  # Paus alguses on välja lülitatud
         self.pause_start = None  # Pausi algusaeg
         self.elapsed_paused_time = 0  # Aeg, kui mäng on pausil
         self.last_time = pygame.time.get_ticks()  # Viimane aeg, et delta arvutada
-        self.time_at_pause = GAME_DURATION  # Salvestame progressiriba hetke väärtuse pausi alguses
+        self.time_at_pause = duration # Salvestame progressiriba hetke väärtuse pausi alguses
+        self.duration = duration
+
+        print(f"GameTimer initialized with duration: {self.duration} (type: {type(self.duration)})")
 
     # Lülitab pausi sisse ja välja.
     def toggle_pause(self):
@@ -39,7 +42,7 @@ class GameTimer:
     def get_time_left(self):
         if self.paused:
             return self.time_at_pause  # Kui pausil, tagastame salvestatud aja
-        return max(0, GAME_DURATION - (time.time() - self.start_time - self.elapsed_paused_time))
+        return max(0, self.duration - (time.time() - self.start_time - self.elapsed_paused_time))
 
     # Kontrollib, kas aeg on läbi.
     def is_time_up(self):
@@ -57,7 +60,7 @@ class GameTimer:
     # Kuvab progressiriba ekraanile vastavalt jäänud ajale.
     def draw_progress_bar(self, screen):
         time_left = self.get_time_left()
-        progress_width = int((time_left / GAME_DURATION) * 200)
+        progress_width = int((time_left / BASE_GAME_DURATION) * 200)
 
         # Kuvame progressiriba
         pygame.draw.rect(screen, WHITE, (200, 10, 200, 20), 2)  # Riba raam

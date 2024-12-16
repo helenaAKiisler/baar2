@@ -8,7 +8,7 @@ from progress_bar import GameTimer
 from scene import Scene
 from src.game.main import enemy_image
 from main import table_image, bar_image
-from settings import WIDTH, HEIGHT
+from settings import WIDTH, HEIGHT, get_game_duration
 
 
 class GameLevel(Scene):
@@ -18,13 +18,14 @@ class GameLevel(Scene):
         self.screen = screen
         self.base_path = base_path
         self.level = level
+        self.game_timer = GameTimer(get_game_duration(level))
         self.is_running = True
         self.score = 0
         self.carried_glasses = 0
         self.max_glasses = 3
         self.waiting_to_place_glasses = False
         self.collected_glasses = []
-        self.win_points = 15
+        self.win_points = 12
 
         # Määrame baasi tee (base_path) kõigis meetodites kasutamiseks
         self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -65,7 +66,7 @@ class GameLevel(Scene):
 
         # Pausi seaded
         self.is_paused = False
-        self.game_timer = GameTimer()
+        self.game_timer = GameTimer(get_game_duration(level))
 
         self.time_up = False  # Lisame oleku, et jälgida, kas aeg on otsas
         self.restart_button = ui.Button("Try Again", on_pressed=self.restart_level)
@@ -175,6 +176,12 @@ class GameLevel(Scene):
         for glass in self.glasses:
             print(f"Klaas loodud asukohas: {glass.rect}")
 
+    def draw_level_text(self, screen):
+        """Joonistab ekraanile leveli numbri paremas ülanurgas."""
+        font = pygame.font.Font(None, 36)  # Sama font nagu punktide jaoks
+        level_text = font.render(f"Level: {self.level}", True, (255, 255, 255))
+        text_width = level_text.get_width()
+        screen.blit(level_text, (WIDTH - text_width - 20, 20))  # Positsioneerib paremas ülanurgas
 
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
@@ -236,6 +243,9 @@ class GameLevel(Scene):
         # Tumeda ala lisamine punktide ja progress bar'i taustaks
         dark_area_height = 50
         pygame.draw.rect(screen, (0, 0, 0), (0, 0, WIDTH, dark_area_height))
+
+        # Kuvame leveli numbri
+        self.draw_level_text(screen)
 
         self.sprites.draw(screen)
         ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
@@ -377,5 +387,8 @@ class GameLevel(Scene):
             self.waiting_to_place_glasses = True
 
     def check_win_condition(self):
-        if self.time_up:
-            self.scene_switcher("WinMenu", self.screen)
+        if self.time_up and self.score >= self.win_points and self.carried_glasses >= 10:
+            if self.level < 5:
+                self.scene_switcher("GameLevel", self.screen, self.level + 1)
+            else:
+                self.scene_switcher("WinMenu", self.screen)

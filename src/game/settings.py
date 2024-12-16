@@ -5,7 +5,11 @@ import pygame
 # Ekraani seaded
 WIDTH, HEIGHT = 800, 600
 FPS = 60
-GAME_DURATION = 60  # Mäng kestab 60 sekundit
+BASE_GAME_DURATION = 60  # Mäng kestab 60 sekundit
+
+def get_game_duration(level):
+    """Tagastab mängu kestuse vastavalt levelile."""
+    return max(BASE_GAME_DURATION - (level - 1) * 3, 15)  # Iga leveliga 3 sekundit vähem, miinimum 15 sekundit
 
 # Värvid
 DARK_BROWN = (101, 67, 33)

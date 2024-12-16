@@ -17,7 +17,7 @@
 import pygame
 import sys
 import os
-from settings import WIDTH, HEIGHT
+from settings import WIDTH, HEIGHT, get_game_duration
 from player import Player
 from progress_bar import GameTimer
 from object import Glass, Table, Enemy, Bar
@@ -80,17 +80,17 @@ tables.add(table1)
 enemy = Enemy(200, 80, enemy_image, tables)
 
 # Mängu aja loogika
-game_timer = GameTimer()
+game_timer = GameTimer(get_game_duration(1)) #esimese leveli kestus
 
 # Ekraani stseenivahetus funktsioon
-def scene_switcher(new_scene_name, screen=None):
+def scene_switcher(new_scene_name, screen=None, level=1):
     from game_level import GameLevel
     global current_scene
     if new_scene_name == "MainMenu":
         from main_menu import MainMenu
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
-        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
+        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path, level=level)  # Edastame screen objekti
     elif new_scene_name == "WinMenu":
         current_scene = WinMenu(scene_switcher, text="You won!", screen=screen)
 
