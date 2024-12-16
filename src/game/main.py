@@ -18,7 +18,6 @@ import pygame
 import sys
 import os
 from settings import WIDTH, HEIGHT
-from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
 from main_menu import MainMenu, WinMenu
@@ -28,7 +27,6 @@ pygame.init()
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
-FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 score = 0
 game = Game()
 game.start_game()
@@ -36,7 +34,6 @@ current_scene: Scene
 
 # Game initialization
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Loome screen objekti
-initialize_font()  # Initsialiseerime FONT
 
 
 #Lisame muusika

@@ -180,14 +180,14 @@ class GameLevel(Scene):
         if self.is_paused:
             # Must taust ja overlay
             overlay = pygame.Surface((WIDTH, HEIGHT))
-            overlay.set_alpha(150)  # Läbipaistev must kiht
+            overlay.set_alpha(170)  # Läbipaistev must kiht
             overlay.fill((0, 0, 0))
             screen.blit(overlay, (0, 0))
 
             # Kuvame "Continue" nupu ekraani keskele
             continue_button_position = (WIDTH // 2 - self.continue_button.rect.width // 2 , HEIGHT // 2 - self.continue_button.rect.height // 2)
             self.continue_button.render(screen, continue_button_position)
-            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 + 90)
+            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 - self.quit_button.rect.height // 2 + 90)
             self.quit_button.render(screen, quit_button_position)
 
         elif self.time_up:
@@ -196,7 +196,7 @@ class GameLevel(Scene):
             else:
                 # "Aeg läbi" ekraan
                 overlay = pygame.Surface((WIDTH, HEIGHT))
-                overlay.set_alpha(150)
+                overlay.set_alpha(170)
                 overlay.fill((0, 0, 0))
                 screen.blit(overlay, (0, 0))
 
@@ -205,11 +205,11 @@ class GameLevel(Scene):
                 screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3 -40))
 
                 # Nuppude kuvamine
-                self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
-                self.quit_button.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
+                self.restart_button.render(screen, (WIDTH // 2 - self.restart_button.rect.width // 2, HEIGHT // 2- self.restart_button.rect.height // 2))
+                self.quit_button.render(screen, (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 - self.quit_button.rect.height // 2 + 90))
                 pygame.mixer.music.pause()
                 lose_sound = pygame.mixer.Sound("../../assets/sfx/lose.mp3")
-                lose_sound.play()
+                lose_sound.play(1)
                 pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         else:
             # Kuvame Pause nuppu ainult siis, kui aeg pole otsas

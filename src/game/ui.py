@@ -5,15 +5,7 @@ from settings import buttons, buttons_pressed, button_path, OFF_WHITE
 from os import listdir
 from os.path import isfile, join
 from typing import Callable
-pygame.font.init()  # Initsialiseerime Pygame'i fondisüsteemi enne FONT muutujat
 
-
-
-FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
-
-def initialize_font():
-    global FONT
-    FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
 
 class Button(pygame.Surface):
