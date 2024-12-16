@@ -17,10 +17,10 @@
 import pygame
 import sys
 import os
-from settings import WIDTH, HEIGHT, get_game_duration
+from settings import WIDTH, HEIGHT
 from player import Player
 from progress_bar import GameTimer
-from object import Glass, Table, Enemy, Bar
+from object import  Table, Enemy, Bar
 from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
@@ -31,7 +31,7 @@ pygame.init()
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
-font = pygame.font.SysFont("Arial", 30)
+FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 score = 0
 game = Game()
 game.start_game()
@@ -80,18 +80,29 @@ tables.add(table1)
 enemy = Enemy(200, 80, enemy_image, tables)
 
 # Mängu aja loogika
-game_timer = GameTimer(get_game_duration(1)) #esimese leveli kestus
+game_timer = GameTimer()
+
+#Lisame muusika
+pygame.mixer.music.load("../../assets/sfx/menu.mp3")
+pygame.mixer.music.play(-1)
 
 # Ekraani stseenivahetus funktsioon
-def scene_switcher(new_scene_name, screen=None, level=1):
+def scene_switcher(new_scene_name, screen=None):
     from game_level import GameLevel
     global current_scene
     if new_scene_name == "MainMenu":
         from main_menu import MainMenu
+        pygame.mixer.music.load("../../assets/sfx/menu.mp3")
+        pygame.mixer.music.play(-1)
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
-        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path, level=level)  # Edastame screen objekti
+        pygame.mixer.music.load("../../assets/sfx/background.mp3")
+        pygame.mixer.music.play(-1)
+        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
     elif new_scene_name == "WinMenu":
+        pygame.mixer.music.load("../../assets/sfx/win.mp3")
+        pygame.mixer.music.play(1)
+        pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         current_scene = WinMenu(scene_switcher, text="You won!", screen=screen)
 
 # Põhifunktsioon
