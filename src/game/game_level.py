@@ -169,10 +169,6 @@ class GameLevel(Scene):
             self.enemies.add(enemy)
             self.sprites.add(enemy)
 
-        for glass in self.glasses:
-            print(f"Klaas loodud asukohas: {glass.rect}")
-
-
     def handle_events(self, event):
         """Mängu sündmuste käsitlemine."""
         if self.time_up:

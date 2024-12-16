@@ -23,7 +23,7 @@ class Button(pygame.Surface):
         self.on_pressed = on_pressed
         self.rect = pygame.Rect(0, 0, 400, 30)  # Nupu suurus
         self.color = (91, 139, 102)  #Heleroheline
-        self.text_surface = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 30).render(self.text, True, (16, 72, 36))
+        self.text_surface = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25).render(self.text, True, (16, 72, 36))
         self.is_down = False
         button_size = self.text_surface.get_rect().inflate(BUTTON_PADDING, BUTTON_PADDING).size
         super().__init__(button_size)

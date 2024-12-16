@@ -1,6 +1,6 @@
 # Mängus olevate objektide klassid mis määravad ära lauad, baari, klaasid ja vastase.
 import pygame
-from settings import GRAY,WIDTH
+from settings import WIDTH
 
 
 class Bar(pygame.sprite.Sprite):
@@ -24,7 +24,7 @@ class Table(pygame.sprite.Sprite):
         self.rect.y = y
 
     def draw(self, screen):
-        pygame.draw.rect(screen, GRAY, self.rect)
+        pygame.draw.rect(screen, self.rect)
 
 
 class Glass(pygame.sprite.Sprite):
