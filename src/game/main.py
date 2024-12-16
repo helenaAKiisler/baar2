@@ -31,7 +31,7 @@ pygame.init()
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
-FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 30)
+FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 score = 0
 game = Game()
 game.start_game()
@@ -41,46 +41,6 @@ current_scene: Scene
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Loome screen objekti
 initialize_font()  # Initsialiseerime FONT
 
-# Mängija ja vastase, tausta failitee ja pildi laadimine
-base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Töötab igasuguste süsteemide puhul
-
-# Taustapildi laadimine
-background_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "floor.png")
-background_image = pygame.image.load(background_image_path)
-background_image = pygame.transform.scale(background_image, (WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
-
-# Laadige laua pilt (laud2.png)
-table_image_path = os.path.join(base_path, "..", "assets", "designs", "table", "table2.png")
-table_image = pygame.image.load(table_image_path)
-#table_image = pygame.transform.scale(table_image, (64, 64))  # Scaling the table image
-
-# Baar
-# Muudame baari pildi kasutama laua pilti
-bar_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "baar2.png")
-bar_image = pygame.image.load(bar_image_path)
-bar = Bar(bar_image, 288, 96)
-
-# Mängija pildi määramine
-character_image_path = os.path.join(base_path, "..", "assets", "designs", "character", "mees", "idle.png")
-player_image = pygame.image.load(character_image_path)
-
-# Laadige vaenlase pilt enne objekti loomist
-enemy_image_path = os.path.join(base_path, "..", "assets", "designs", "customer", "klient1.png")
-enemy_image = pygame.image.load(enemy_image_path)
-
-# Objektide loomine
-player = Player(WIDTH // 2, HEIGHT - 80, player_image, bar_image)
-
-# Kood, mis loob lauaobjektid ja edastab need vaenlasele
-tables = pygame.sprite.Group()
-table1 = Table(100, 100, table_image)  # Edastame table_image
-tables.add(table1)
-
-# Loome vaenlase
-enemy = Enemy(200, 80, enemy_image, tables)
-
-# Mängu aja loogika
-game_timer = GameTimer()
 
 #Lisame muusika
 pygame.mixer.music.load("../../assets/sfx/menu.mp3")
@@ -100,7 +60,7 @@ def scene_switcher(new_scene_name, screen=None, level=1):
     elif new_scene_name == "GameLevel":
         pygame.mixer.music.load("../../assets/sfx/background.mp3")
         pygame.mixer.music.play(-1)
-        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path, level=level)
+        current_scene = GameLevel(scene_switcher, screen=screen, level=level)
     elif new_scene_name == "WinMenu":
         pygame.mixer.music.load("../../assets/sfx/win.mp3")
         pygame.mixer.music.play(1)

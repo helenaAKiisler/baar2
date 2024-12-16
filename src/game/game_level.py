@@ -7,138 +7,14 @@ from player import Player
 from object import Glass, Table, Enemy, Bar
 from progress_bar import GameTimer
 from scene import Scene
-from main import table_image, enemy_image
+from settings import table_image, enemy_image, bar_image, player_image, background_image, base_path, predefined_table_positions, predefined_enemy_positions, glass_types
 from settings import WIDTH, HEIGHT, BLACK
-
-class TutorialLevel(Scene):
-    def __init__(self, scene_switcher, screen):
-        super().__init__(scene_switcher)
-        self.screen = screen
-        self.is_running = True
-        self.game_timer = GameTimer(duration=30)
-
-        # Baastee määramine
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-
-        # Laadime pildid
-        self.background_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "background", "floor.png"))
-        self.background_image = pygame.transform.scale(self.background_image, (WIDTH, HEIGHT))
-
-        self.player_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "character", "mees", "idle.png"))
-        self.table_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "table", "table2.png"))
-        self.enemy_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "customer", "klient1.png"))
-        self.bar_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "background", "baar2.png"))
-        self.glass_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "glass", "martini.png"))
-
-        # Mängu objektid
-        self.bar = Bar(self.bar_image, 288, 96)
-        self.player = Player(WIDTH // 2, HEIGHT - 200, self.player_image, self.bar)
-        self.table = Table(WIDTH // 2 - 32, HEIGHT // 2 - 32, self.table_image)  # Laud ekraani keskel
-        self.enemy = Enemy(WIDTH // 2 + 100, HEIGHT // 2 - 100, self.enemy_image, pygame.sprite.Group(self.table))
-        self.enemy.BASE_SPEED = 4  # Suurendame vastase kiirust
-
-        # Klaasi paigutamine täpselt laua keskele
-        self.glass = Glass(self.table.rect.centerx - self.glass_image.get_width() // 2,
-                           self.table.rect.centery - self.glass_image.get_height() // 2,
-                           self.glass_image, points=5)
-
-        # Kas mängija kannab klaasi
-        self.is_carrying_glass = False
-
-        # Skip nupp
-        self.skip_button = ui.Button("Skip", on_pressed=self.skip_tutorial)
-
-        # Selgitavad tekstid inglise keeles
-        self.font = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20)
-        self.tutorial_texts = [
-            ("Use arrow keys or WASD to move.", (20, HEIGHT - 180)),
-            ("Press X to pick up glasses.", (20, HEIGHT - 150)),
-            ("Press SPACE to place glasses on the bar.", (20, HEIGHT - 120)),
-            ("Collect minimum 15 points.", (20, HEIGHT - 90)),
-            ("Avoid enemies!", (20, HEIGHT - 60)),
-        ]
-
-        # Sprite grupp
-        self.all_sprites = pygame.sprite.Group(self.bar, self.player, self.table, self.enemy, self.glass)
-
-    def skip_tutorial(self):
-        self.scene_switcher("GameLevel", self.screen, level=1)
-
-    def handle_events(self, event):
-        self.skip_button.handle_events(event)
-
-        if event.type == pygame.KEYDOWN:
-            # Korjamine (X-klahv)
-            if event.key == pygame.K_x and not self.is_carrying_glass:
-                expanded_rect = self.player.rect.inflate(20, 20)
-                if expanded_rect.colliderect(self.glass.rect):
-                    self.is_carrying_glass = True
-                    self.all_sprites.remove(self.glass)
-                    print("Glass picked up!")
-
-            # Mahapanek (SPACE-klahv)
-            if event.key == pygame.K_SPACE and self.is_carrying_glass:
-                if self.player.rect.colliderect(self.bar.rect):
-                    self.is_carrying_glass = False
-                    self.glass.rect.topleft = (self.bar.rect.centerx - self.glass.rect.width // 2, self.bar.rect.top + 20)
-                    self.all_sprites.add(self.glass)
-                    print("Glass placed on the bar!")
-
-            # Tagasi peamenüüsse (Q-klahv)
-            if event.key == pygame.K_q:
-                self.scene_switcher("MainMenu", self.screen)
-
-    def update(self):
-        keys = pygame.key.get_pressed()
-        delta = pygame.time.Clock().tick(60) / 1000
-        self.player.BASE_SPEED = 200  # Suurendame mängija kiirust
-        self.player.handle_movement(keys, [self.table], delta)
-        self.enemy.update()
-        self.check_collisions()
-        self.game_timer.get_delta_time()
-
-    def check_collisions(self):
-        # Kontroll kokkupõrke kohta vaenlasega
-        if self.player.rect.colliderect(self.enemy.rect):
-            if self.is_carrying_glass:
-                self.is_carrying_glass = False
-                self.glass.rect.topleft = (self.table.rect.centerx - self.glass.rect.width // 2, self.table.rect.centery - self.glass.rect.height // 2)
-
-    def render(self, screen):
-        # Taustapildi kordamine, et katta kogu ekraan nagu tavalises levelis
-        for x in range(0, WIDTH, self.background_image.get_width()):
-            for y in range(0, HEIGHT, self.background_image.get_height()):
-                screen.blit(self.background_image, (x, y))
-
-        # Must ala progressiriba ja punktide jaoks
-        pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, 50))
-
-        # Kuvame punktid ja "Tutorial Level" teksti progressiriba kõrval
-        points_text = self.font.render("Points: 0", True, (180, 212, 187))
-        tutorial_text = self.font.render("Tutorial Level", True, (180, 212, 187))
-        screen.blit(points_text, (10, 10))
-        screen.blit(tutorial_text, (WIDTH // 2 + 80, 10))
-
-        # Kuvame kõik sprite'id
-        self.all_sprites.draw(screen)
-
-        # Kuvame progressiriba
-        self.game_timer.draw_progress_bar(screen)
-
-        # Selgitavate tekstide kuvamine
-        for text, position in self.tutorial_texts:
-            text_surface = self.font.render(text, True, (0, 0, 0))
-            screen.blit(text_surface, position)
-
-        # Skip nupp paremas ülanurgas, veidi rohkem paremale nihutatud
-        self.skip_button.render(screen, (WIDTH - 140, 10))
 
 class GameLevel(Scene):
 
-    def __init__(self, scene_switcher, screen, base_path, level=1):
+    def __init__(self, scene_switcher, screen, level=1):
         super().__init__(scene_switcher)
         self.screen = screen
-        self.base_path = base_path
         self.level = level
         self.is_running = True
         self.score = 0
@@ -150,7 +26,7 @@ class GameLevel(Scene):
         self.placed_glasses = []
 
         # Määrame baasi tee (base_path) kõigis meetodites kasutamiseks
-        self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.base_path = base_path
 
         # Lisame kollisioonide kihid ja muud spraitide grupid
         self.collision_layer = pygame.sprite.Group()
@@ -159,30 +35,15 @@ class GameLevel(Scene):
         self.glasses = pygame.sprite.Group()
         self.tables = pygame.sprite.Group()
 
-        # Laadige taustapilt
-        self.background_image_path = os.path.join(self.base_path, "assets", "designs", "background", "floor.png")
-        self.background_image = pygame.image.load(self.background_image_path)
-        self.background_image = pygame.transform.scale(self.background_image,(WIDTH // 4, HEIGHT // 4))  # Muudame suuruse ekraanile sobivaks
-
-        # Baar
-        bar_image_path = os.path.join(base_path, "..", "assets", "designs", "background", "baar2.png")
-        self.bar_image = pygame.image.load(bar_image_path)
-        self.rect = self.bar_image.get_rect()
+        self.background_image = pygame.transform.scale(background_image,(WIDTH // 8, HEIGHT // 8))  # Muudame suuruse ekraanile sobivaks
 
         # Baar objekti loomine
-        self.bar = Bar(self.bar_image, 288, 96)
-        self.sprites.add(self.bar)  # Lisa baar sprite gruppi
-
-        # Mängija pildi määramine
-        character_image_path = os.path.join(self.base_path, "assets", "designs", "character", "mees", "idle.png")
-        player_image = pygame.image.load(character_image_path)
-
-        # Paigutame baari ekraani ülaosas keskele
-        self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
-        self.rect.y = 50  # Baar asub ekraani ülaservas
+        self.bar_image = bar_image
+        self.bar = Bar(256,50, 288, 96, self.bar_image)
+        self.sprites.add(self.bar)
 
         # Mängija loomine
-        self.player = Player(WIDTH // 2, HEIGHT - 80, player_image, self.bar)
+        self.player = Player(400, 520, player_image, self.bar)
         self.sprites.add(self.player)
 
 
@@ -191,6 +52,8 @@ class GameLevel(Scene):
         self.game_timer = GameTimer()
 
         self.time_up = False  # Lisame oleku, et jälgida, kas aeg on otsas
+
+        #Nupud
         self.restart_button = ui.Button("Try Again", on_pressed=self.restart_level)
         self.quit_button_time_up = ui.Button("Quit", on_pressed=self.quit_game)
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
@@ -204,47 +67,14 @@ class GameLevel(Scene):
 
     def setup_level(self, level):
         """Seadistab taseme raskusastme ja muud elemendid."""
-        table_count = min(5 + level, 10)  # Taseme raskusaste
-        glass_count = min(5 + 2 * level, 15)
+        table_count = min(5 + level, 10)
         enemy_count = min(1 + (level // 2), 5)
-
-        # Defineeri kindlad kohad lauadeks (koordinaadid)
-        predefined_table_positions = [
-            (466, 536), (272, 226), (272, 381), (466, 381), (272, 536),
-            (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)
-        ]
-
-        predefined_enemy_positions = [
-            (144, 162), (144, 304), (596, 440), (726, 246)
-        ]
-
-        # Paigutame lauad kindlatesse kohtadesse, kontrollides, et nad ei oleks liiga lähedal baari
-        positions = []
         for i in range(table_count):
-            while True:
-                x, y = predefined_table_positions[i]
-                new_rect = pygame.Rect(x, y, 64, 64)  # 80x80 on laua suurus
-
-                # Kontrollime, et laud ei ole liiga lähedal baari
-                if new_rect.colliderect(self.bar.rect) or new_rect.centerx > self.bar.rect.right + 50:
-                    continue  # Kui laud on liiga lähedal baari, proovime uut kohta
-
-                # Kui laud ei kattu teistega ja ei ole liiga lähedal baari, paigutame laua
-                if not any(new_rect.colliderect(existing) for existing in positions):
-                    table = Table(x, y, table_image)
-                    self.tables.add(table)
-                    self.sprites.add(table)
-                    self.collision_layer.add(table)
-                    positions.append(new_rect)
-                    break  # Kui laud ei kattu teistega ja ei ole liiga lähedal baari, paigutame laua
-
-        # Klaaside paigutus
-        glass_types = [
-            {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "shot.png")),"points": 1},
-            {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "klaas3.png")),"points": 2},
-            {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "martini.png")),"points": 3}
-        ]
-
+            x, y = predefined_table_positions[i]
+            table = Table(x, y, 64, 64, table_image)
+            self.tables.add(table)
+            self.sprites.add(self.tables)
+            self.collision_layer.add(self.tables)
 
         # Paigutame klaasid laua keskpunkti ümber
         for table in self.tables:
@@ -254,37 +84,28 @@ class GameLevel(Scene):
             table_centery = table.rect.centery
 
             # Paigutame klaasid täpselt laua keskpunkti ümber, et need ei ulatuks laua piiridest välja
-            for i in range(3):
+            for i in range(2):
                 # Iga klaasi paigutamine erinevatesse kohtadesse laua ümber
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
                     x_offset = table_centerx - 25
                     y_offset = table_centery - 15
+                    glass_data = random.choice(glass_types)  # Valime klaasi tüübi
+                    glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
+                    self.glasses.add(glass)
+                    self.sprites.add(glass)
                 else:
                     # Teine klaas paigutatakse laua paremale küljele
                     x_offset = table_centerx + 5
                     y_offset = table_centery - 15
-
-                # Kontrollime, et klaasi positsioon ei kattu teiste klaasidega
-                glass_rect = pygame.Rect(x_offset, y_offset, 18, 24)
-                if not any(glass_rect.colliderect(existing.rect) for existing in self.glasses):
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
-                    glass = Glass(x_offset, y_offset, glass_data["image"], glass_data["points"])
+                    glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)
                     self.sprites.add(glass)
-                    positions.append(glass.rect)
 
         # Lisame vaenlased, tagame, et nad ei saa tekkida lauadele
         for a in range(enemy_count):
-            while True:
-                enemy_x, enemy_y = predefined_enemy_positions[a]
-                enemy_rect = pygame.Rect(enemy_x, enemy_y, 60, 60)  # Vaenlase suurus
-
-                # Kontrollime, kas vaenlase koht ei kattu lauaga
-                if not any(enemy_rect.colliderect(table.rect) for table in self.tables):
-                    break  # Kui vaenlane ei kattu lauaga, siis paigutame ta
-
-            # Kui koht on leitud, loome vaenlase ja lisame selle
+            enemy_x, enemy_y = predefined_enemy_positions[a]
             enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
             self.enemies.add(enemy)
             self.sprites.add(enemy)
@@ -299,7 +120,7 @@ class GameLevel(Scene):
                 self.quit_button_time_up.handle_events(event)
             return
 
-        if self.is_paused:  # Only handle pause-related events
+        if self.is_paused:
             self.continue_button.handle_events(event)
             self.quit_button.handle_events(event)
             return
@@ -325,20 +146,12 @@ class GameLevel(Scene):
                 place_glass_sound.play()
 
     def pause_game(self):
-        """Pausib mängu ja kuvab 'Continue' nupu."""
         if self.is_paused == False:
             self.is_paused = True
             self.continue_button.visible = True  # Kuvab 'Continue' nupu
             self.game_timer.pause()
 
-        # Loome läbipaistva musta kihi ekraanile, et teha ekraan udune
-        overlay = pygame.Surface((WIDTH, HEIGHT))
-        overlay.set_alpha(150)
-        overlay.fill((0, 0, 0))
-        self.screen.blit(overlay, (0, 0))
-
     def resume_game(self):
-        """Taaskäivitab mängu pärast pausi."""
         if self.is_paused == True:
             self.is_paused = False
             self.continue_button.visible = False  # Peidab 'Continue' nupu
@@ -405,11 +218,9 @@ class GameLevel(Scene):
             self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):
-        """Käivitab leveli uuesti algusest."""
         self.scene_switcher("GameLevel", self.screen)  # Vahetab stseeni tagasi GameLevel'iks
 
     def quit_game(self):
-        """Mängu lõpetamine või MainMenu-le naasmine"""
         self.scene_switcher("MainMenu", self.screen)
 
     def pick_up_glass(self):
@@ -434,27 +245,22 @@ class GameLevel(Scene):
 
     def place_glasses_in_bar(self):
         """Paigutab mängija korjatud klaasid baari musta ala peale ja lisab punktid."""
-        # Määrame klaaside asukoha baari musta ala peale
         bar_x = self.bar.rect.left
         bar_top = self.bar.rect.top
 
-        # Suurem hulk nihkeid, et klaasid ei kattuks
-        x_offsets = [15, 15, 15, 15, 25, 35, 45, 55, 65]
+        x_offsets = [15, 15, 15, 15]
 
         for i, glass in enumerate(self.collected_glasses):
-            if i < len(x_offsets):
-                if len(self.placed_glasses) == 0:
-                    glass.rect.x = bar_x + x_offsets[i]
-                    glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
-                    self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
-                    self.placed_glasses.append(glass.rect.x)
-                elif len(self.placed_glasses) > 0:
-                    glass.rect.x = self.placed_glasses[-1] + x_offsets[i]
-                    glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
-                    self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
-                    self.placed_glasses.append(glass.rect.x)
-            else:
-                print("Liiga palju klaase korraga, paigutus ebaõnnestus.")
+            if len(self.placed_glasses) == 0:
+                glass.rect.x = bar_x + x_offsets[i]
+                glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
+                self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
+                self.placed_glasses.append(glass.rect.x)
+            elif len(self.placed_glasses) > 0:
+                glass.rect.x = self.placed_glasses[-1] + x_offsets[i]
+                glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
+                self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
+                self.placed_glasses.append(glass.rect.x)
 
         # Lisame punktid
         for glass in self.collected_glasses:
@@ -519,3 +325,76 @@ class GameLevel(Scene):
                 self.scene_switcher("GameLevel", self.screen, level=next_level)
             else:
                 self.scene_switcher("WinMenu", self.screen)
+
+class TutorialLevel(GameLevel):
+    def __init__(self, scene_switcher, screen, ):
+        super().__init__(scene_switcher, screen)
+        # Laadime pildid
+        self.background_image = background_image
+        self.background_image = pygame.transform.scale(self.background_image, (WIDTH, HEIGHT))
+
+        self.player_image = player_image
+        self.table_image = table_image
+        self.enemy_image = enemy_image
+        self.bar_image = bar_image
+        self.glass_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "glass", "martini.png"))
+
+        # Mängu objektid
+        self.bar = Bar(self.bar_image, 288, 96)
+        self.player = Player(WIDTH // 2, 400, self.player_image, self.bar)
+        self.table = Table(WIDTH // 2 - 32, HEIGHT // 2 - 32, self.table_image)  # Laud ekraani keskel
+        self.enemy = Enemy(WIDTH // 2 + 100, HEIGHT // 2 - 100, self.enemy_image, pygame.sprite.Group(self.table))
+
+        # Klaasi paigutamine täpselt laua keskele
+        self.glass = Glass(self.table.rect.centerx - self.glass_image.get_width() // 2,
+                           self.table.rect.centery - self.glass_image.get_height() // 2,
+                           self.glass_image, points=5)
+
+        # Kas mängija kannab klaasi
+        self.is_carrying_glass = False
+
+        # Skip nupp
+        self.skip_button = ui.Button("Skip", on_pressed=self.skip_tutorial)
+
+        self.tutorial_texts = [
+            ("Use arrow keys or WASD to move.", (20, HEIGHT - 180)),
+            ("Press X to pick up glasses.", (20, HEIGHT - 150)),
+            ("Press SPACE to place glasses on the bar.", (20, HEIGHT - 120)),
+            ("Collect minimum 15 points.", (20, HEIGHT - 90)),
+            ("Avoid enemies!", (20, HEIGHT - 60)),
+        ]
+
+        # Sprite grupp
+        self.all_sprites = pygame.sprite.Group(self.bar, self.player, self.table, self.enemy, self.glass)
+
+    def skip_tutorial(self):
+        self.scene_switcher("GameLevel", self.screen, level=1)
+
+    def render(self, screen):
+        # Taustapildi kordamine, et katta kogu ekraan nagu tavalises levelis
+        for x in range(0, WIDTH, self.background_image.get_width()):
+            for y in range(0, HEIGHT, self.background_image.get_height()):
+                screen.blit(self.background_image, (x, y))
+
+        # Must ala progressiriba ja punktide jaoks
+        pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, 50))
+
+        # Kuvame punktid ja "Tutorial Level" teksti progressiriba kõrval
+        points_text = self.font.render("Points: 0", True, (180, 212, 187))
+        tutorial_text = self.font.render("Tutorial Level", True, (180, 212, 187))
+        screen.blit(points_text, (10, 10))
+        screen.blit(tutorial_text, (WIDTH // 2 + 80, 10))
+
+        # Kuvame kõik sprite'id
+        self.all_sprites.draw(screen)
+
+        # Kuvame progressiriba
+        self.game_timer.draw_progress_bar(screen)
+
+        # Selgitavate tekstide kuvamine
+        for text, position in self.tutorial_texts:
+            text_surface = self.font.render(text, True, (0, 0, 0))
+            screen.blit(text_surface, position)
+
+        # Skip nupp paremas ülanurgas, veidi rohkem paremale nihutatud
+        self.skip_button.render(screen, (WIDTH - 140, 10))

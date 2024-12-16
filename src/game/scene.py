@@ -6,7 +6,7 @@ import pygame
 class Scene(ABC):
 
     def __init__(self, scene_switcher):
-        self.scene_switcher = scene_switcher  # Edastage scene_switcher, kui on vajalik
+        self.scene_switcher = scene_switcher
         self.is_running = True
 
     def handle_events(self):

@@ -2,50 +2,37 @@
 import pygame
 from settings import WIDTH
 
-
-class Bar(pygame.sprite.Sprite):
-    def __init__(self, image, width, height):
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, image):
         super().__init__()
-        new_image = pygame.transform.scale(image, (width, height))
-        self.image = new_image
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.image = pygame.transform.scale(image, (self.width, self.height))
+
+class Bar(Object):
+    def __init__(self, x, y, width, height, image):
+        super().__init__(x, y, width, height, image)
         self.rect = self.image.get_rect()
 
         # Paigutame baari ekraani ülaosas keskele
-        self.rect.x = (WIDTH - self.rect.width) // 2  # Baar on keskendatud horisontaalselt
-        self.rect.y = 50 # Baar asub ekraani ülaservas, kuid natuke allpool
+        self.rect.x = x
+        self.rect.y = y
 
-class Table(pygame.sprite.Sprite):
-    def __init__(self, x, y, image):
-        super().__init__()
-        new_image = pygame.transform.scale(image, (64, 64))
-        self.image = new_image  # Määrame laua suuruse
+class Table(Object):
+    def __init__(self, x, y, width, height, image):
+        super().__init__(x, y, width, height, image)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.rect)
 
-
-class Glass(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, points):
-        super().__init__()
-        new_image = pygame.transform.scale(image, (20, 20))
-        self.image = new_image  # Klaasi pilt
-        self.rect = self.image.get_rect(topleft=(x, y))  # Määrame klaasi positsiooni ja suuruse, et see oleks sama suur kui pilt
+class Glass(Object):
+    def __init__(self, x, y, width, height, image, points):
+        super().__init__(x, y, width, height, image)
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.points = points  # Klaasi punktiväärtus
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)  # Joonistame klaasi ekraanile
-
-    def check_pickup(self, player, score):
-        # laiendan klaasi üleskorjamis/kokkupõrke ala
-        pickup_area = self.rect.inflate(80, 80)
-
-        if pickup_area.colliderect(player.rect):
-            score += self.points
-            return True, score  # Tagastame True, et klaas saaks eemaldada
-        return False, score
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -86,6 +73,11 @@ class Enemy(pygame.sprite.Sprite):
         elif self.rect.left <= 0:
             self.direction = 1  # Muudame suunda paremale
             self.update_direction("right")
+
+        for table in self.tables:
+            if self.rect.colliderect(table.rect):
+                self.direction = 1
+                self.update_direction("right")
 
     def update_direction(self, direction):
         if self.direction2 != direction:

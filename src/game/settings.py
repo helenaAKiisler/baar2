@@ -1,11 +1,13 @@
 import os
 import pygame
+from os.path import join, abspath, dirname
+from pygame.image import load
 # Üldised värvid ja seaded mida mängus kasutatakse.
 
 # Ekraani seaded
 WIDTH, HEIGHT = 800, 600
 FPS = 60
-duration = 60  # Mäng kestab 60 sekundit
+GAME_DURATION = 60  # Mäng kestab 60 sekundit
 
 # Värvid
 DARK_BROWN = (101, 67, 33)
@@ -22,3 +24,29 @@ RED = (255, 0, 0)
 PLAYER_SIZE = 50
 PLAYER_SPEED = 5
 
+base_path = abspath(join(dirname(__file__), "..", "..", "assets", "designs"))
+
+background_image = load(join(base_path, "background", "floor.png"))
+table_image = load(join(base_path, "table", "table2.png"))
+bar_image = load(join(base_path, "background", "baar2.png"))
+player_image = load(join(base_path, "character", "mees", "idle.png"))
+enemy_image = load(join(base_path, "customer", "klient1.png"))
+
+predefined_table_positions = [
+            (466, 536), (272, 226), (272, 381), (466, 381), (272, 536),
+            (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)
+        ]
+
+predefined_enemy_positions = [
+            (144, 162), (144, 304), (596, 440), (726, 246)
+        ]
+
+glass_types = [
+            {"image": load(join(base_path, "glass", "shot.png")),"points": 1},
+            {"image": load(join(base_path, "glass", "klaas3.png")),"points": 2},
+            {"image": load(join(base_path, "glass", "martini.png")),"points": 3}
+        ]
+
+buttons = ["Continue.png", "Pause.png", "Play_again.png", "Quit.png", "Start.png", "Try_again.png"]
+buttons_pressed = ["Continue_pressed.png", "Pause_pressed.png", "Play_again_pressed.png", "Quit_pressed.png", "Start_pressed.png", "Try_again_pressed.png"]
+button_path = load(join(base_path, "buttons"))
