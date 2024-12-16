@@ -21,24 +21,23 @@ class Button(pygame.Surface):
     def __init__(self, text, on_pressed: Callable):
         self.text = text
         self.on_pressed = on_pressed
-        self.rect = pygame.Rect(0, 0, 400, 30)  # Nupu suurus
-        self.color = (91, 139, 102)  #Heleroheline
+        self.rect = pygame.Rect(0, 0, 150, 30)  # Nupu laiuse ja kõrguse määramine
+        self.color = (91, 139, 102)  # Nupu värv
         self.text_surface = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25).render(self.text, True, (16, 72, 36))
         self.is_down = False
-        button_size = self.text_surface.get_rect().inflate(BUTTON_PADDING, BUTTON_PADDING).size
+        button_size = self.text_surface.get_rect().inflate(20, 20).size
         super().__init__(button_size)
 
     def render(self, screen: pygame.Surface, position):
-        is_mouse_pressed = pygame.mouse.get_pressed(3)[0]
         button_color = BUTTON_HOVER_COLOR if self.is_down else BUTTON_COLOR
-
         detection_rect = pygame.draw.rect(screen, button_color, pygame.Rect(position, self.get_size()))
-        screen.blit(self.text_surface, (position[0] + BUTTON_PADDING // 2, position[1] + BUTTON_PADDING // 2))
+        screen.blit(self.text_surface, (position[0] + 10, position[1] + 10))
 
-        if self.is_down and not is_mouse_pressed:
+        # Vajutamise tuvastamine
+        if self.is_down and not pygame.mouse.get_pressed(3)[0]:
             self.on_pressed()
 
-        self.is_down = is_mouse_pressed and detection_rect.collidepoint(pygame.mouse.get_pos())
+        self.is_down = pygame.mouse.get_pressed(3)[0] and detection_rect.collidepoint(pygame.mouse.get_pos())
 
     def check_click(self, pos):
         """Kontrollib, kas nupp on klikitud."""
@@ -53,6 +52,6 @@ class Button(pygame.Surface):
                     self.on_pressed()  # Kutsub välja nuppudele määratud tegevuse
 
 def draw_score(screen, font, score):
-    score_text = font.render(f"Punktid: {score}", True, OFF_WHITE)
-    screen.blit(score_text, (10, 10))
+    score_text = font.render(f"Points: {score}", True, OFF_WHITE)
+    screen.blit(score_text, (10, 0))
 

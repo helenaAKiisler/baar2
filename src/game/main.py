@@ -87,18 +87,20 @@ pygame.mixer.music.load("../../assets/sfx/menu.mp3")
 pygame.mixer.music.play(-1)
 
 # Ekraani stseenivahetus funktsioon
-def scene_switcher(new_scene_name, screen=None):
-    from game_level import GameLevel
+def scene_switcher(new_scene_name, screen=None, level=1):
+    from game_level import GameLevel, TutorialLevel
     global current_scene
     if new_scene_name == "MainMenu":
         from main_menu import MainMenu
         pygame.mixer.music.load("../../assets/sfx/menu.mp3")
         pygame.mixer.music.play(-1)
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
+    elif new_scene_name == "TutorialLevel":
+        current_scene = TutorialLevel(scene_switcher, screen=screen)
     elif new_scene_name == "GameLevel":
         pygame.mixer.music.load("../../assets/sfx/background.mp3")
         pygame.mixer.music.play(-1)
-        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
+        current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path, level=level)
     elif new_scene_name == "WinMenu":
         pygame.mixer.music.load("../../assets/sfx/win.mp3")
         pygame.mixer.music.play(1)

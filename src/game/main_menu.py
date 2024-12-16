@@ -13,7 +13,7 @@ class MainMenu(Scene):
         self.game_title = game_title
         self.screen = screen
         # Start nupp
-        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
+        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("TutorialLevel", screen, level=1))
         # Quit nupp
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 
@@ -47,8 +47,7 @@ class MainMenu(Scene):
             screen.get_height() - self.quit_button.get_height() - 110))
 
         # Tiitel
-        title_text = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 48).render(self.game_title, True,
-                                                                                                (152, 191, 161))
+        title_text = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 48).render(self.game_title, True,(152, 191, 161))
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, HEIGHT // 4))
 
     def quit_game(self):

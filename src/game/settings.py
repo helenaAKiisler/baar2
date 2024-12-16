@@ -5,7 +5,7 @@ import pygame
 # Ekraani seaded
 WIDTH, HEIGHT = 800, 600
 FPS = 60
-GAME_DURATION = 60  # Mäng kestab 60 sekundit
+duration = 60  # Mäng kestab 60 sekundit
 
 # Värvid
 DARK_BROWN = (101, 67, 33)
