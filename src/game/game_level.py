@@ -1,6 +1,9 @@
 import pygame
 import os
 import random
+
+from pygame import K_SPACE
+
 from src.game import ui
 from player import Player
 from object import Glass, Table, Enemy, Bar
@@ -193,6 +196,8 @@ class GameLevel(Scene):
                 self.pick_up_glass()
             elif event.key == pygame.K_p:
                 self.pause_game()
+            elif self.waiting_to_place_glasses and event.key == K_SPACE:
+                self.place_glasses_in_bar()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.pause_button.rect.collidepoint(event.pos):  # Pause button clicked
