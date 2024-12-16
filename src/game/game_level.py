@@ -320,7 +320,7 @@ class GameLevel(Scene):
     def check_win_condition(self):
         if self.time_up and self.score >= self.win_points:
             next_level = self.level + 1
-            if next_level <= 5:
+            if next_level <= 4:
                 self.scene_switcher("GameLevel", self.screen, level=next_level)
             else:
                 self.scene_switcher("WinMenu", self.screen)
