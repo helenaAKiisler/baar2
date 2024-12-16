@@ -31,7 +31,7 @@ pygame.init()
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
-font = pygame.font.SysFont("Arial", 30)
+FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 score = 0
 game = Game()
 game.start_game()

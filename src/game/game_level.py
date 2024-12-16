@@ -6,8 +6,7 @@ from player import Player
 from object import Glass, Table, Enemy, Bar
 from progress_bar import GameTimer
 from scene import Scene
-from src.game.main import enemy_image
-from main import table_image, bar_image
+from main import table_image, bar_image, enemy_image
 from settings import WIDTH, HEIGHT
 
 
@@ -25,6 +24,7 @@ class GameLevel(Scene):
         self.waiting_to_place_glasses = False
         self.collected_glasses = []
         self.win_points = 15
+        self.placed_glasses = []
 
         # Määrame baasi tee (base_path) kõigis meetodites kasutamiseks
         self.base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -87,7 +87,7 @@ class GameLevel(Scene):
 
         # Defineeri kindlad kohad lauadeks (koordinaadid)
         predefined_table_positions = [
-            (466, 508), (272, 226), (272, 368), (466, 368), (272, 508),
+            (466, 536), (272, 226), (272, 381), (466, 381), (272, 536),
             (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)
         ]
 
@@ -118,30 +118,24 @@ class GameLevel(Scene):
         # Klaaside paigutus
         glass_types = [
             {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "shot.png")),"points": 1},
-            {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "klaas4.png")),"points": 2},
+            {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "klaas3.png")),"points": 2},
             {"image": pygame.image.load(os.path.join(self.base_path, "assets", "designs", "glass", "martini.png")),"points": 3}
         ]
 
-        # Klaasi suuruse määramine (nt 50x50 px)
-        glass_width = 20
-        glass_height = 20
 
         # Paigutame klaasid laua keskpunkti ümber
         for table in self.tables:
-            table_rect = table.rect
-            table_width = table_rect.width
-            table_height = table_rect.height
 
             # Määrame laua keskpunkti
-            table_centerx = table_rect.centerx
-            table_centery = table_rect.centery
+            table_centerx = table.rect.centerx
+            table_centery = table.rect.centery
 
             # Paigutame klaasid täpselt laua keskpunkti ümber, et need ei ulatuks laua piiridest välja
             for i in range(3):
                 # Iga klaasi paigutamine erinevatesse kohtadesse laua ümber
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
-                    x_offset = table_centerx - glass_width - 5  # Väike kaugus vasakule
+                    x_offset = table_centerx - 25
                     y_offset = table_centery - 15
                 else:
                     # Teine klaas paigutatakse laua paremale küljele
@@ -149,7 +143,7 @@ class GameLevel(Scene):
                     y_offset = table_centery - 15
 
                 # Kontrollime, et klaasi positsioon ei kattu teiste klaasidega
-                glass_rect = pygame.Rect(x_offset, y_offset, glass_width, glass_height)
+                glass_rect = pygame.Rect(x_offset, y_offset, 18, 24)
                 if not any(glass_rect.colliderect(existing.rect) for existing in self.glasses):
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
                     glass = Glass(x_offset, y_offset, glass_data["image"], glass_data["points"])
@@ -251,9 +245,9 @@ class GameLevel(Scene):
 
             # Kuvame "Continue" nupu ekraani keskele
             continue_button_position = (
-            WIDTH // 2 - self.continue_button.rect.width // 2, HEIGHT // 2 - self.continue_button.rect.height // 2)
+            WIDTH // 2 - self.continue_button.rect.width // 2 + 130, HEIGHT // 2 - self.continue_button.rect.height // 2)
             self.continue_button.render(screen, continue_button_position)
-            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 + 50)
+            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2 + 170, HEIGHT // 2 + 90)
             self.quit_button.render(screen, quit_button_position)
 
         elif self.time_up:
@@ -272,7 +266,7 @@ class GameLevel(Scene):
 
                 # Nuppude kuvamine
                 self.restart_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
-                self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 30))
+                self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 70))
         else:
             # Kuvame Quit nuppu ainult siis, kui aeg pole otsas
             pause_button_position = (WIDTH - 250, HEIGHT - 70)
@@ -308,17 +302,24 @@ class GameLevel(Scene):
     def place_glasses_in_bar(self):
         """Paigutab mängija korjatud klaasid baari musta ala peale ja lisab punktid."""
         # Määrame klaaside asukoha baari musta ala peale
-        bar_centerx = self.bar.rect.centerx
+        bar_x = self.bar.rect.left
         bar_top = self.bar.rect.top
 
         # Suurem hulk nihkeid, et klaasid ei kattuks
-        x_offsets = [-60, -30, 0, 30, 60]
+        x_offsets = [15, 15, 15, 15, 25, 35, 45, 55, 65]
 
         for i, glass in enumerate(self.collected_glasses):
             if i < len(x_offsets):
-                glass.rect.centerx = bar_centerx + x_offsets[i]
-                glass.rect.y = bar_top + 20  # Paigutame klaasid musta ala peale
-                self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
+                if len(self.placed_glasses) == 0:
+                    glass.rect.x = bar_x + x_offsets[i]
+                    glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
+                    self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
+                    self.placed_glasses.append(glass.rect.x)
+                elif len(self.placed_glasses) > 0:
+                    glass.rect.x = self.placed_glasses[-1] + x_offsets[i]
+                    glass.rect.y = bar_top + 40  # Paigutame klaasid musta ala peale
+                    self.sprites.add(glass)  # Lisame klaasi uuesti sprite'ide gruppi
+                    self.placed_glasses.append(glass.rect.x)
             else:
                 print("Liiga palju klaase korraga, paigutus ebaõnnestus.")
 
