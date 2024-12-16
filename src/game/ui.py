@@ -33,7 +33,7 @@ class Button(pygame.Surface):
         button_color = BUTTON_HOVER_COLOR if self.is_down else BUTTON_COLOR
 
         detection_rect = pygame.draw.rect(screen, button_color, pygame.Rect(position, self.get_size()))
-        screen.blit(self.text_surface, (position[0] + BUTTON_PADDING / 2, position[1] + BUTTON_PADDING / 2))
+        screen.blit(self.text_surface, (position[0] + BUTTON_PADDING // 2, position[1] + BUTTON_PADDING // 2))
 
         if self.is_down and not is_mouse_pressed:
             self.on_pressed()

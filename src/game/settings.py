@@ -23,11 +23,6 @@ RED = (255, 0, 0)
 PLAYER_SIZE = 50
 PLAYER_SPEED = 5
 
-# Klaaside seaded
-GLASS_SIZE = 30
-TABLE_SIZE = 60
-
-# Juhuslikud laua positsioonid (kindlad kohad)
-PRESET_TABLE_POSITIONS = [
-    (100, 150), (300, 150), (500, 150), (200, 350), (400, 350)
-]
+#pickup_sfx = pygame.mixer.Sound()
+#place_glass_sfx = pygame.mixer.Sound()
+#background_music = pygame.mixer.Sound()

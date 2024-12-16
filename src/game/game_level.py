@@ -273,8 +273,8 @@ class GameLevel(Scene):
                 self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
                 self.quit_button_time_up.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
         else:
-            # Kuvame Quit nuppu ainult siis, kui aeg pole otsas
-            pause_button_position = (WIDTH - 150, HEIGHT - 100)
+            # Kuvame Pause nuppu ainult siis, kui aeg pole otsas
+            pause_button_position = (WIDTH - 150, 0)
             self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):
