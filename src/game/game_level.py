@@ -269,9 +269,9 @@ class GameLevel(Scene):
                 overlay.fill((0, 0, 0))
                 screen.blit(overlay, (0, 0))
 
-                font = pygame.font.Font(None, 72)
+                font = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 42)
                 text = font.render("Time is up! You lost", True, (180, 212, 187))
-                screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
+                screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3 -40))
 
                 # Nuppude kuvamine
                 self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
