@@ -15,7 +15,7 @@ class MainMenu(Scene):
         # Start nupp
         self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
         # Quit nupp
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis viib tagasi MainMenu
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 
     # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):
@@ -50,7 +50,7 @@ class WinMenu(Scene):
         self.screen = screen
         self.text = text
         self.restart_button = ui.Button("Play again", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis viib tagasi MainMenu
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 
     # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):

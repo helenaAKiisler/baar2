@@ -2,6 +2,7 @@
 import pygame
 from settings import GRAY,WIDTH
 
+
 class Bar(pygame.sprite.Sprite):
     def __init__(self, image, width, height):
         super().__init__()
@@ -25,6 +26,7 @@ class Table(pygame.sprite.Sprite):
     def draw(self, screen):
         pygame.draw.rect(screen, GRAY, self.rect)
 
+
 class Glass(pygame.sprite.Sprite):
     def __init__(self, x, y, image, points):
         super().__init__()
@@ -45,17 +47,19 @@ class Glass(pygame.sprite.Sprite):
             return True, score  # Tagastame True, et klaas saaks eemaldada
         return False, score
 
+
 class Enemy(pygame.sprite.Sprite):
     BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
 
     def __init__(self, x, y, image, tables):
         super().__init__()
-        new_image = pygame.transform.scale(image, (64, 64))
-        self.image = new_image
+        self.new_image = pygame.transform.scale(image, (64, 64))
+        self.image = self.new_image
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
         self.paused = False  # Lisame pausiseisundi atribuudi
+        self.direction2 = "right"
 
         # Liikumise algsuund (paremale)
         self.direction = 1  # 1 tähendab paremale, -1 vasakule
@@ -78,8 +82,16 @@ class Enemy(pygame.sprite.Sprite):
         # Kui vaenlane jõuab ekraani äärde, muudame liikumissuunda
         if self.rect.right >= pygame.display.get_surface().get_width():
             self.direction = -1  # Muudame suunda vasakule
+            self.update_direction("left")
         elif self.rect.left <= 0:
             self.direction = 1  # Muudame suunda paremale
+            self.update_direction("right")
+
+    def update_direction(self, direction):
+        if self.direction2 != direction:
+            self.direction2 = direction
+            flip_x = direction == "left"
+            self.image = pygame.transform.flip(self.new_image, flip_x, False)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)

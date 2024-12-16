@@ -10,7 +10,7 @@ GAME_DURATION = 60  # Mäng kestab 60 sekundit
 # Värvid
 DARK_BROWN = (101, 67, 33)
 BLUE = (0, 0, 255)
-WHITE = (255, 255, 255)
+OFF_WHITE = (180, 213, 187)
 GRAY = (169, 169, 169)  # Laudade värv
 GREEN = (130, 218, 112)
 BLACK = (0, 0, 0)

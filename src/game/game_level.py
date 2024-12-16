@@ -6,7 +6,7 @@ from player import Player
 from object import Glass, Table, Enemy, Bar
 from progress_bar import GameTimer
 from scene import Scene
-from main import table_image, bar_image, enemy_image
+from main import table_image, enemy_image
 from settings import WIDTH, HEIGHT
 
 
@@ -229,10 +229,10 @@ class GameLevel(Scene):
 
         # Tumeda ala lisamine punktide ja progress bar'i taustaks
         dark_area_height = 50
-        pygame.draw.rect(screen, (0, 0, 0), (0, 0, WIDTH, dark_area_height))
+        pygame.draw.rect(screen, (26, 35, 29), (0, 0, WIDTH, dark_area_height))
 
         self.sprites.draw(screen)
-        ui.draw_score(screen, pygame.font.Font(None, 36), self.score)
+        ui.draw_score(screen, pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20), self.score)
         self.game_timer.draw_progress_bar(screen)
 
         # Kui mäng on pausil, kuvatakse must ekraan ja 'Continue' nupp
@@ -261,15 +261,15 @@ class GameLevel(Scene):
                 screen.blit(overlay, (0, 0))
 
                 font = pygame.font.Font(None, 72)
-                text = font.render("Time is up! You lost", True, (255, 0, 0))
+                text = font.render("Time is up! You lost", True, (180, 212, 187))
                 screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 3))
 
                 # Nuppude kuvamine
-                self.restart_button.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 - 30))
-                self.quit_button_time_up.render(screen, (WIDTH // 2 - 100, HEIGHT // 2 + 70))
+                self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
+                self.quit_button_time_up.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
         else:
             # Kuvame Quit nuppu ainult siis, kui aeg pole otsas
-            pause_button_position = (WIDTH - 250, HEIGHT - 70)
+            pause_button_position = (WIDTH - 150, HEIGHT - 100)
             self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):

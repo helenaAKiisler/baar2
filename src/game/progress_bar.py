@@ -1,7 +1,7 @@
 # Määrab ära progressiriba ja selle muutumise mängu alustamisel pausile minekul ja lõpetamisel.
 import time
 import pygame
-from settings import GAME_DURATION, WHITE, GREEN
+from settings import GAME_DURATION, OFF_WHITE, GREEN
 
 class GameTimer:
     def __init__(self):
@@ -60,5 +60,5 @@ class GameTimer:
         progress_width = int((time_left / GAME_DURATION) * 200)
 
         # Kuvame progressiriba
-        pygame.draw.rect(screen, WHITE, (200, 10, 200, 20), 2)  # Riba raam
+        pygame.draw.rect(screen, OFF_WHITE, (200, 10, 200, 20), 2)  # Riba raam
         pygame.draw.rect(screen, GREEN, (200, 10, progress_width, 20))  # Täituv progressiriba

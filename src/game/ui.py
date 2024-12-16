@@ -1,7 +1,7 @@
 # Fonti initseerimine ja nuppude klass, mis sätestab ära erinevad nupud mängus.
 
 import pygame
-from settings import WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
+from settings import OFF_WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
 from typing import Callable
 pygame.font.init()  # Initsialiseerime Pygame'i fondisüsteemi enne FONT muutujat
 
@@ -22,7 +22,7 @@ class Button(pygame.Surface):
         self.text = text
         self.on_pressed = on_pressed
         self.rect = pygame.Rect(0, 0, 400, 30)  # Nupu suurus
-        self.color = (91, 139, 102)  #Tumeroheline
+        self.color = (91, 139, 102)  #Heleroheline
         self.text_surface = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 30).render(self.text, True, (16, 72, 36))
         self.is_down = False
         button_size = self.text_surface.get_rect().inflate(BUTTON_PADDING, BUTTON_PADDING).size
@@ -53,6 +53,6 @@ class Button(pygame.Surface):
                     self.on_pressed()  # Kutsub välja nuppudele määratud tegevuse
 
 def draw_score(screen, font, score):
-    score_text = font.render(f"Punktid: {score}", True, WHITE)
+    score_text = font.render(f"Punktid: {score}", True, OFF_WHITE)
     screen.blit(score_text, (10, 10))
 

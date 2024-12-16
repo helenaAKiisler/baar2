@@ -20,7 +20,7 @@ import os
 from settings import WIDTH, HEIGHT
 from player import Player
 from progress_bar import GameTimer
-from object import Glass, Table, Enemy, Bar
+from object import  Table, Enemy, Bar
 from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
