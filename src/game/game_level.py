@@ -198,12 +198,16 @@ class GameLevel(Scene):
                 self.pause_game()
             elif self.waiting_to_place_glasses and event.key == K_SPACE:
                 self.place_glasses_in_bar()
+                place_glass_sound = pygame.mixer.Sound("../../assets/sfx/place_glass.mp3")
+                place_glass_sound.play()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.pause_button.rect.collidepoint(event.pos):  # Pause button clicked
                 self.pause_game()
             if self.waiting_to_place_glasses and event.button == 1:
                 self.place_glasses_in_bar()
+                place_glass_sound = pygame.mixer.Sound("../../assets/sfx/place_glass.mp3")
+                place_glass_sound.play()
 
     def pause_game(self):
         """Pausib mängu ja kuvab 'Continue' nupu."""
@@ -272,6 +276,10 @@ class GameLevel(Scene):
                 # Nuppude kuvamine
                 self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
                 self.quit_button_time_up.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
+                pygame.mixer.music.pause()
+                lose_sound = pygame.mixer.Sound("../../assets/sfx/lose.mp3")
+                lose_sound.play()
+                pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         else:
             # Kuvame Pause nuppu ainult siis, kui aeg pole otsas
             pause_button_position = (WIDTH - 150, 0)
@@ -298,6 +306,8 @@ class GameLevel(Scene):
                     self.glasses.remove(glass)  # Eemaldame klaasi klaaside grupist
                     self.sprites.remove(glass)  # Eemaldame klaasi sprite'ide grupist
                     print(f"Klaas korjatud! Kannab {self.carried_glasses} klaasi.")
+                    pickup_sound = pygame.mixer.Sound("../../assets/sfx/pick_up.mp3")
+                    pickup_sound.play()
                     break
             else:
                 print("Ühtegi klaasi ei leitud mängija lähedalt.")
@@ -345,6 +355,8 @@ class GameLevel(Scene):
         # Vaenlase kokkupõrke kontroll
         if pygame.sprite.spritecollide(self.player, self.enemies, False):
             # Kui mängija põrkab kokku vaenlasega, kaotab ta kõik klaasid, aga mitte punktid
+            collision_sound = pygame.mixer.Sound("../../assets/sfx/enemy.mp3")
+            collision_sound.play()
             self.carried_glasses = 0
             self.collected_glasses.clear()
             print("Põrkasid vaenlasega! Klaasid kadusid.")

@@ -82,16 +82,27 @@ enemy = Enemy(200, 80, enemy_image, tables)
 # Mängu aja loogika
 game_timer = GameTimer()
 
+#Lisame muusika
+pygame.mixer.music.load("../../assets/sfx/menu.mp3")
+pygame.mixer.music.play(-1)
+
 # Ekraani stseenivahetus funktsioon
 def scene_switcher(new_scene_name, screen=None):
     from game_level import GameLevel
     global current_scene
     if new_scene_name == "MainMenu":
         from main_menu import MainMenu
+        pygame.mixer.music.load("../../assets/sfx/menu.mp3")
+        pygame.mixer.music.play(-1)
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "GameLevel":
+        pygame.mixer.music.load("../../assets/sfx/background.mp3")
+        pygame.mixer.music.play(-1)
         current_scene = GameLevel(scene_switcher, screen=screen, base_path=base_path)  # Edastame screen objekti
     elif new_scene_name == "WinMenu":
+        pygame.mixer.music.load("../../assets/sfx/win.mp3")
+        pygame.mixer.music.play(1)
+        pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         current_scene = WinMenu(scene_switcher, text="You won!", screen=screen)
 
 # Põhifunktsioon
