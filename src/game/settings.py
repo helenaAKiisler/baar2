@@ -14,7 +14,7 @@ DARK_BROWN = (101, 67, 33)
 BLUE = (0, 0, 255)
 OFF_WHITE = (180, 213, 187)
 GREEN = (130, 218, 112)
-BLACK = (0, 0, 0)
+BLACK = (26, 35, 29)
 DARK_GRAY = (99, 102, 106)
 DARK_GREEN = (16, 72, 36)
 LIGHT_GREEN = (91, 139, 102)
@@ -49,4 +49,4 @@ glass_types = [
 
 buttons = ["Continue.png", "Pause.png", "Play_again.png", "Quit.png", "Start.png", "Try_again.png"]
 buttons_pressed = ["Continue_pressed.png", "Pause_pressed.png", "Play_again_pressed.png", "Quit_pressed.png", "Start_pressed.png", "Try_again_pressed.png"]
-button_path = load(join(base_path, "buttons"))
+button_path = abspath(join(dirname(__file__), "..", "..", "assets", "designs", "buttons"))

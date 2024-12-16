@@ -1,15 +1,13 @@
 # Fonti initseerimine ja nuppude klass, mis sätestab ära erinevad nupud mängus.
 
 import pygame
-from settings import OFF_WHITE, LIGHT_GREEN, DARK_GREEN, GREEN
+from settings import buttons, buttons_pressed, button_path, OFF_WHITE
+from os import listdir
+from os.path import isfile, join
 from typing import Callable
 pygame.font.init()  # Initsialiseerime Pygame'i fondisüsteemi enne FONT muutujat
 
-TEXT_COLOR = pygame.Color(152, 191, 161)
-BUTTON_TEXT_COLOR = pygame.Color(16, 72, 36)
-BUTTON_COLOR = pygame.Color(91, 139, 102)
-BUTTON_HOVER_COLOR = pygame.Color(152, 191, 161)
-BUTTON_PADDING = 15
+
 
 FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
@@ -17,28 +15,29 @@ def initialize_font():
     global FONT
     FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
 
+
 class Button(pygame.Surface):
-    FONT = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 25)
-    def __init__(self, text, on_pressed: Callable):
-        self.text = text
+    def __init__(self, button, on_pressed: Callable):
         self.on_pressed = on_pressed
-        self.rect = pygame.Rect(0, 0, 150, 30)  # Nupu laiuse ja kõrguse määramine
-        self.color = (91, 139, 102)  # Nupu värv
-        self.text_surface = FONT.render(self.text, True, (16, 72, 36))
         self.is_down = False
-        button_size = self.text_surface.get_rect().inflate(20, 20).size
+        self.button = button
+        self.button_image = pygame.image.load(join(button_path, (button + ".png")))
+        self.button_hover_img = pygame.image.load(join(button_path, (button + "_pressed.png")))
+        self.rect = self.button_image.get_rect()
+        button_size = self.rect.size
         super().__init__(button_size)
 
     def render(self, screen: pygame.Surface, position):
-        button_color = BUTTON_HOVER_COLOR if self.is_down else BUTTON_COLOR
-        detection_rect = pygame.draw.rect(screen, button_color, pygame.Rect(position, self.get_size()))
-        screen.blit(self.text_surface, (position[0] + 10, position[1] + 10))
+        is_mouse_pressed = pygame.mouse.get_pressed(3)[0]
+        button_img = self.button_hover_img if self.is_down else self.button_image
+        detection_rect = pygame.draw.rect(screen, OFF_WHITE, pygame.Rect((position[0]+5, position[1]+5), (self.get_width()-10, self.get_height()-10)))
+        screen.blit(button_img, (position[0], position[1]))
 
         # Vajutamise tuvastamine
-        if self.is_down and not pygame.mouse.get_pressed(3)[0]:
+        if self.is_down and not is_mouse_pressed:
             self.on_pressed()
 
-        self.is_down = pygame.mouse.get_pressed(3)[0] and detection_rect.collidepoint(pygame.mouse.get_pos())
+        self.is_down = is_mouse_pressed and detection_rect.collidepoint(pygame.mouse.get_pos())
 
     def check_click(self, pos):
         """Kontrollib, kas nupp on klikitud."""

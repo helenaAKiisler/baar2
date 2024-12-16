@@ -13,7 +13,7 @@ class MainMenu(Scene):
         self.game_title = game_title
         self.screen = screen
         # Start nupp
-        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("GameLevel", screen))
+        self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("TutorialLevel", screen))
         # Quit nupp
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
 

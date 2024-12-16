@@ -54,8 +54,7 @@ class GameLevel(Scene):
         self.time_up = False  # Lisame oleku, et jälgida, kas aeg on otsas
 
         #Nupud
-        self.restart_button = ui.Button("Try Again", on_pressed=self.restart_level)
-        self.quit_button_time_up = ui.Button("Quit", on_pressed=self.quit_game)
+        self.restart_button = ui.Button("Try_Again", on_pressed=self.restart_level)
         self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
         self.continue_button = ui.Button("Continue", on_pressed=self.resume_game)
         self.pause_button = ui.Button("Pause", on_pressed=self.pause_game)
@@ -117,7 +116,7 @@ class GameLevel(Scene):
                 self.check_win_condition()
             else:
                 self.restart_button.handle_events(event)
-                self.quit_button_time_up.handle_events(event)
+                self.quit_button.handle_events(event)
             return
 
         if self.is_paused:
@@ -186,9 +185,9 @@ class GameLevel(Scene):
             screen.blit(overlay, (0, 0))
 
             # Kuvame "Continue" nupu ekraani keskele
-            continue_button_position = (WIDTH // 2 - self.continue_button.rect.width // 2 + 130, HEIGHT // 2 - self.continue_button.rect.height // 2)
+            continue_button_position = (WIDTH // 2 - self.continue_button.rect.width // 2 , HEIGHT // 2 - self.continue_button.rect.height // 2)
             self.continue_button.render(screen, continue_button_position)
-            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2 + 170, HEIGHT // 2 + 90)
+            quit_button_position = (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 + 90)
             self.quit_button.render(screen, quit_button_position)
 
         elif self.time_up:
@@ -207,14 +206,14 @@ class GameLevel(Scene):
 
                 # Nuppude kuvamine
                 self.restart_button.render(screen, (WIDTH // 2 - 80, HEIGHT // 2 - 30))
-                self.quit_button_time_up.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
+                self.quit_button.render(screen, (WIDTH // 2 - 40, HEIGHT // 2 + 70))
                 pygame.mixer.music.pause()
                 lose_sound = pygame.mixer.Sound("../../assets/sfx/lose.mp3")
                 lose_sound.play()
                 pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         else:
             # Kuvame Pause nuppu ainult siis, kui aeg pole otsas
-            pause_button_position = (WIDTH - 150, 0)
+            pause_button_position = (WIDTH - 130, 5)
             self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):
@@ -329,7 +328,13 @@ class GameLevel(Scene):
 class TutorialLevel(GameLevel):
     def __init__(self, scene_switcher, screen, ):
         super().__init__(scene_switcher, screen)
-        # Laadime pildid
+        self.score = 0
+        self.carried_glasses = 0
+        self.max_glasses = 3
+        self.waiting_to_place_glasses = False
+        self.collected_glasses = []
+        self.win_points = 15
+        self.placed_glasses = []
         self.background_image = background_image
         self.background_image = pygame.transform.scale(self.background_image, (WIDTH, HEIGHT))
 
@@ -337,18 +342,20 @@ class TutorialLevel(GameLevel):
         self.table_image = table_image
         self.enemy_image = enemy_image
         self.bar_image = bar_image
-        self.glass_image = pygame.image.load(os.path.join(base_path, "assets", "designs", "glass", "martini.png"))
+        self.glass_image = pygame.image.load(os.path.join(base_path, "glass", "uusmartini.png"))
+
+        self.collision_layer = pygame.sprite.Group()
+        self.sprites = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
+        self.glasses = pygame.sprite.Group()
+        self.tables = pygame.sprite.Group()
 
         # Mängu objektid
-        self.bar = Bar(self.bar_image, 288, 96)
+        self.bar = Bar(256,50, 288, 96, self.bar_image)
         self.player = Player(WIDTH // 2, 400, self.player_image, self.bar)
-        self.table = Table(WIDTH // 2 - 32, HEIGHT // 2 - 32, self.table_image)  # Laud ekraani keskel
-        self.enemy = Enemy(WIDTH // 2 + 100, HEIGHT // 2 - 100, self.enemy_image, pygame.sprite.Group(self.table))
 
         # Klaasi paigutamine täpselt laua keskele
-        self.glass = Glass(self.table.rect.centerx - self.glass_image.get_width() // 2,
-                           self.table.rect.centery - self.glass_image.get_height() // 2,
-                           self.glass_image, points=5)
+
 
         # Kas mängija kannab klaasi
         self.is_carrying_glass = False
@@ -365,7 +372,55 @@ class TutorialLevel(GameLevel):
         ]
 
         # Sprite grupp
-        self.all_sprites = pygame.sprite.Group(self.bar, self.player, self.table, self.enemy, self.glass)
+        self.sprites.add(self.bar)
+        self.sprites.add(self.player)
+        self.setup_level(0)
+
+    def setup_level(self, level=0):
+        """Seadistab taseme raskusastme ja muud elemendid."""
+        table_count = 2
+        enemy_count = 1
+        for i in range(table_count):
+            x, y = predefined_table_positions[i]
+            table = Table(x, y, 64, 64, table_image)
+            self.tables.add(table)
+            self.collision_layer.add(self.tables)
+            self.sprites.add(self.tables)
+
+        # Paigutame klaasid laua keskpunkti ümber
+        for table in self.tables:
+
+            # Määrame laua keskpunkti
+            table_centerx = table.rect.centerx
+            table_centery = table.rect.centery
+
+            # Paigutame klaasid täpselt laua keskpunkti ümber, et need ei ulatuks laua piiridest välja
+            for i in range(2):
+                # Iga klaasi paigutamine erinevatesse kohtadesse laua ümber
+                if i == 0:
+                    # Esimene klaas paigutatakse laua vasakule küljele
+                    x_offset = table_centerx - 25
+                    y_offset = table_centery - 15
+                    glass_data = random.choice(glass_types)  # Valime klaasi tüübi
+                    glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
+                    self.glasses.add(glass)
+                    self.sprites.add(glass)
+                else:
+                    # Teine klaas paigutatakse laua paremale küljele
+                    x_offset = table_centerx + 5
+                    y_offset = table_centery - 15
+                    glass_data = random.choice(glass_types)  # Valime klaasi tüübi
+                    glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
+                    self.glasses.add(glass)
+                    self.sprites.add(glass)
+
+        # Lisame vaenlased, tagame, et nad ei saa tekkida lauadele
+        for a in range(enemy_count):
+            enemy_x, enemy_y = predefined_enemy_positions[a]
+            enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
+            self.enemies.add(enemy)
+            self.sprites.add(enemy)
+
 
     def skip_tutorial(self):
         self.scene_switcher("GameLevel", self.screen, level=1)
@@ -380,21 +435,22 @@ class TutorialLevel(GameLevel):
         pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, 50))
 
         # Kuvame punktid ja "Tutorial Level" teksti progressiriba kõrval
-        points_text = self.font.render("Points: 0", True, (180, 212, 187))
-        tutorial_text = self.font.render("Tutorial Level", True, (180, 212, 187))
+        font = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20)
+        points_text = font.render(f"Points: {self.score}", True, (180, 212, 187))
+        tutorial_text = font.render("Tutorial Level", True, (180, 212, 187))
         screen.blit(points_text, (10, 10))
         screen.blit(tutorial_text, (WIDTH // 2 + 80, 10))
 
         # Kuvame kõik sprite'id
-        self.all_sprites.draw(screen)
+        self.sprites.draw(screen)
 
         # Kuvame progressiriba
         self.game_timer.draw_progress_bar(screen)
 
         # Selgitavate tekstide kuvamine
         for text, position in self.tutorial_texts:
-            text_surface = self.font.render(text, True, (0, 0, 0))
+            text_surface = font.render(text, True, (26, 35, 29))
             screen.blit(text_surface, position)
 
         # Skip nupp paremas ülanurgas, veidi rohkem paremale nihutatud
-        self.skip_button.render(screen, (WIDTH - 140, 10))
+        self.skip_button.render(screen, (WIDTH - 130, 5))

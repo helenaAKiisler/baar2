@@ -18,9 +18,6 @@ import pygame
 import sys
 import os
 from settings import WIDTH, HEIGHT
-from player import Player
-from progress_bar import GameTimer
-from object import  Table, Enemy, Bar
 from ui import initialize_font  # Importime initialize_font
 from pohiloogika import Game
 from scene import Scene
@@ -57,6 +54,8 @@ def scene_switcher(new_scene_name, screen=None, level=1):
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "TutorialLevel":
         current_scene = TutorialLevel(scene_switcher, screen=screen)
+        pygame.mixer.music.load("../../assets/sfx/tutorial.mp3")
+        pygame.mixer.music.play(-1)
     elif new_scene_name == "GameLevel":
         pygame.mixer.music.load("../../assets/sfx/background.mp3")
         pygame.mixer.music.play(-1)
