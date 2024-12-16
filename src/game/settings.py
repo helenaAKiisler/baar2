@@ -42,9 +42,9 @@ predefined_enemy_positions = [
         ]
 
 glass_types = [
-            {"image": load(join(base_path, "glass", "shot.png")),"points": 1},
-            {"image": load(join(base_path, "glass", "klaas3.png")),"points": 2},
-            {"image": load(join(base_path, "glass", "martini.png")),"points": 3}
+            {"image": load(join(base_path, "glass", "uusshot.png")),"points": 1},
+            {"image": load(join(base_path, "glass", "uusklaas.png")),"points": 2},
+            {"image": load(join(base_path, "glass", "uusmartini.png")),"points": 3}
         ]
 
 buttons = ["Continue.png", "Pause.png", "Play_again.png", "Quit.png", "Start.png", "Try_again.png"]
