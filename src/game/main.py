@@ -39,6 +39,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Loome screen objekti
 #Lisame muusika
 pygame.mixer.music.load("../../assets/sfx/menu.mp3")
 pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.3)
 
 # Ekraani stseenivahetus funktsioon
 def scene_switcher(new_scene_name, screen=None, level=1):
@@ -48,18 +49,22 @@ def scene_switcher(new_scene_name, screen=None, level=1):
         from main_menu import MainMenu
         pygame.mixer.music.load("../../assets/sfx/menu.mp3")
         pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.3)
         current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
     elif new_scene_name == "TutorialLevel":
         current_scene = TutorialLevel(scene_switcher, screen=screen)
         pygame.mixer.music.load("../../assets/sfx/tutorial.mp3")
         pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.3)
     elif new_scene_name == "GameLevel":
         pygame.mixer.music.load("../../assets/sfx/background.mp3")
         pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.3)
         current_scene = GameLevel(scene_switcher, screen=screen, level=level)
     elif new_scene_name == "WinMenu":
         pygame.mixer.music.load("../../assets/sfx/win.mp3")
         pygame.mixer.music.play(1)
+        pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         current_scene = WinMenu(scene_switcher, text="You won!", screen=screen)
 

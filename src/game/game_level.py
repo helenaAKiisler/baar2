@@ -136,6 +136,7 @@ class GameLevel(Scene):
                 self.place_glasses_in_bar()
                 place_glass_sound = pygame.mixer.Sound("../../assets/sfx/place_glass.mp3")
                 place_glass_sound.play()
+                place_glass_sound.set_volume(0.5)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.pause_button.rect.collidepoint(event.pos):
@@ -144,6 +145,7 @@ class GameLevel(Scene):
                 self.place_glasses_in_bar()
                 place_glass_sound = pygame.mixer.Sound("../../assets/sfx/place_glass.mp3")
                 place_glass_sound.play()
+                place_glass_sound.set_volume(0.5)
 
     def pause_game(self):
         if self.is_paused == False:
@@ -211,6 +213,7 @@ class GameLevel(Scene):
                 pygame.mixer.music.pause()
                 lose_sound = pygame.mixer.Sound("../../assets/sfx/lose.mp3")
                 lose_sound.play(1)
+                lose_sound.set_volume(0.5)
                 pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         else:
             # Kuvame Pause nuppu ainult siis, kui aeg pole otsas
@@ -238,6 +241,7 @@ class GameLevel(Scene):
                     print(f"Klaas korjatud! Kannab {self.carried_glasses} klaasi.")
                     pickup_sound = pygame.mixer.Sound("../../assets/sfx/pick_up.mp3")
                     pickup_sound.play()
+                    pickup_sound.set_volume(0.5)
                     break
             else:
                 print("Ühtegi klaasi ei leitud mängija lähedalt.")
@@ -282,6 +286,7 @@ class GameLevel(Scene):
             # Kui mängija põrkab kokku vaenlasega, kaotab ta kõik klaasid, aga mitte punktid
             collision_sound = pygame.mixer.Sound("../../assets/sfx/enemy.mp3")
             collision_sound.play()
+            collision_sound.set_volume(0.5)
             self.carried_glasses = 0
             self.collected_glasses.clear()
             print("Põrkasid vaenlasega! Klaasid kadusid.")
