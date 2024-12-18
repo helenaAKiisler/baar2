@@ -35,7 +35,7 @@ predefined_table_positions = [
         ]
 
 predefined_enemy_positions = [
-            (144, 162), (144, 304), (596, 444), (726, 246)
+            (144, 162), (144, 304), (596, 458), (726, 246)
         ]
 
 glass_types = [

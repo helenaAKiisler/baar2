@@ -336,10 +336,10 @@ class TutorialLevel(GameLevel):
         super().__init__(scene_switcher, screen)
         self.score = 0
         self.carried_glasses = 0
-        self.max_glasses = 3
+        self.max_glasses = 4
         self.waiting_to_place_glasses = False
         self.collected_glasses = []
-        self.win_points = 15
+        self.win_points = 1
         self.placed_glasses = []
         self.background_image = background_image
         self.background_image = pygame.transform.scale(self.background_image, (WIDTH, HEIGHT))
