@@ -9,11 +9,9 @@ GAME_DURATION = 60  # Mäng kestab 60 sekundit
 
 # Värvid
 DARK_BROWN = (101, 67, 33)
-BLUE = (0, 0, 255)
 OFF_WHITE = (180, 213, 187)
 GREEN = (130, 218, 112)
 BLACK = (26, 35, 29)
-DARK_GRAY = (99, 102, 106)
 DARK_GREEN = (16, 72, 36)
 LIGHT_GREEN = (91, 139, 102)
 RED = (255, 0, 0)
@@ -30,7 +28,7 @@ bar_image = load(join(base_path, "background", "baar2.png"))
 player_image = load(join(base_path, "character", "mees", "idle.png"))
 enemy_image = load(join(base_path, "customer", "klient1.png"))
 
-# Laudade, klaside ja vaenlaste algasukohad.
+# Laudade, klaaside ja vaenlaste algasukohad.
 predefined_table_positions = [
             (466, 536), (272, 226), (272, 381), (466, 381), (272, 536),
             (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)
@@ -46,5 +44,5 @@ glass_types = [
             {"image": load(join(base_path, "glass", "uusmartini.png")),"points": 3}
         ]
 
-
+# Nuppude aadimise tee
 button_path = abspath(join(dirname(__file__), "..", "..", "assets", "designs", "buttons"))

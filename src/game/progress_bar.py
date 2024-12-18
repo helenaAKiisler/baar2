@@ -6,7 +6,7 @@ from settings import GAME_DURATION, OFF_WHITE, GREEN
 class GameTimer:
     def __init__(self):
         self.start_time = time.time()  # Mängu algusaeg
-        self.paused = False  # Paus alguses on välja lülitatud
+        self.paused = False
         self.pause_start = None  # Pausi algusaeg
         self.elapsed_paused_time = 0  # Aeg, kui mäng on pausil
         self.last_time = pygame.time.get_ticks()  # Viimane aeg, et delta arvutada

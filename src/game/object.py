@@ -49,8 +49,8 @@ class Enemy(pygame.sprite.Sprite):
         self.direction2 = "right"
 
         # Liikumise algsuund (paremale)
-        self.direction = 1  # 1 tähendab paremale, -1 vasakule
-        self.tables = tables  # Lauad, millega vaenlane võib kokkupõrked teha
+        self.direction = 1
+        self.tables = tables
 
     def update(self):
         if self.paused:

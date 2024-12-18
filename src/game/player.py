@@ -23,14 +23,14 @@ class Player(pygame.sprite.Sprite):
         move_y = 0
 
         # Arvutame liikumise vastavalt klahvivajutustele ja ajaintervallile
-        if keys[pygame.K_UP] or keys[pygame.K_w] > 0:  # Ülespoole liikumine
+        if keys[pygame.K_UP] or keys[pygame.K_w] > 0:
             move_y = -self.BASE_SPEED * delta
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:  # Allapoole liikumine
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             move_y = self.BASE_SPEED * delta
-        if keys[pygame.K_LEFT] or keys[pygame.K_a] > 0:  # Vasakule liikumine
+        if keys[pygame.K_LEFT] or keys[pygame.K_a] > 0:
             move_x = -self.BASE_SPEED * delta
             self.update_direction("left")
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:  # Paremale liikumine
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             move_x = self.BASE_SPEED * delta
             self.update_direction("right")
 
@@ -40,13 +40,13 @@ class Player(pygame.sprite.Sprite):
 
 
         # Kontrollige, kas mängija ei lähe ekraanist välja
-        if self.rect.left < 0:  # Mängija ei saa minna vasakule väljapoole
+        if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.right > WIDTH:  # Mängija ei saa minna paremale väljapoole
+        if self.rect.right > WIDTH:
             self.rect.right = WIDTH
-        if self.rect.top < 50:  # Kontrollime, et mängija ei liigu tumedale alale
+        if self.rect.top < 50:
             self.rect.top = 50
-        if self.rect.bottom > HEIGHT:  # Mängija ei saa minna allapoole väljapoole
+        if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
         # Kontrollime, kas mängija puutub kokku baariga
