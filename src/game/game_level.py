@@ -89,7 +89,7 @@ class GameLevel(Scene):
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
                     x_offset = table_centerx - 25
-                    y_offset = table_centery - 15
+                    y_offset = table_centery - 20
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
                     glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)
@@ -97,7 +97,7 @@ class GameLevel(Scene):
                 else:
                     # Teine klaas paigutatakse laua paremale küljele
                     x_offset = table_centerx + 5
-                    y_offset = table_centery - 15
+                    y_offset = table_centery - 20
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
                     glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)
@@ -212,7 +212,7 @@ class GameLevel(Scene):
                 self.quit_button.render(screen, (WIDTH // 2 - self.quit_button.rect.width // 2, HEIGHT // 2 - self.quit_button.rect.height // 2 + 90))
                 pygame.mixer.music.pause()
                 lose_sound = pygame.mixer.Sound("../../assets/sfx/lose.mp3")
-                lose_sound.play(1)
+                lose_sound.play(0)
                 lose_sound.set_volume(0.5)
                 pygame.mixer.music.queue("../../assets/sfx/menu.mp3")
         else:
@@ -409,7 +409,7 @@ class TutorialLevel(GameLevel):
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
                     x_offset = table_centerx - 25
-                    y_offset = table_centery - 15
+                    y_offset = table_centery - 20
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
                     glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)
@@ -417,7 +417,7 @@ class TutorialLevel(GameLevel):
                 else:
                     # Teine klaas paigutatakse laua paremale küljele
                     x_offset = table_centerx + 5
-                    y_offset = table_centery - 15
+                    y_offset = table_centery - 20
                     glass_data = random.choice(glass_types)  # Valime klaasi tüübi
                     glass = Glass(x_offset, y_offset, 18, 24, glass_data["image"], glass_data["points"])
                     self.glasses.add(glass)

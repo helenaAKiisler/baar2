@@ -17,7 +17,6 @@
 ##################################################
 import pygame
 import sys
-import os
 from settings import WIDTH, HEIGHT
 from pohiloogika import Game
 from scene import Scene
@@ -28,7 +27,6 @@ pygame.init()
 pygame.display.set_caption("Baar2")
 clock = pygame.time.Clock()
 GAME_TITLE = "Baar2"
-score = 0
 game = Game()
 game.start_game()
 current_scene: Scene
@@ -70,7 +68,7 @@ def scene_switcher(new_scene_name, screen=None, level=1):
 
 # Põhifunktsioon
 def main():
-    global current_scene, score, game_timer
+    global current_scene, game_timer
 
     # Algne stseen
     current_scene = MainMenu(scene_switcher, game_title="Baar 2", screen=screen)
