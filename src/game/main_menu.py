@@ -1,4 +1,4 @@
-# Start menüü kuvamine ekraanile ja nuppude seaded.
+# Start menüü ja võidumenüü kuvamine ekraanile ja nuppude seaded.
 import pygame
 import sys
 import ui
@@ -15,14 +15,14 @@ class MainMenu(Scene):
         # Start nupp
         self.start_button = ui.Button("Start", on_pressed=lambda: self.scene_switcher("TutorialLevel", screen))
         # Quit nupp
-        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)  # Quit nupp, mis sulgeb mängu
+        self.quit_button = ui.Button("Quit", on_pressed=self.quit_game)
 
     # Siin töötleme sündmusi (ka nuppude vajutamist).
     def handle_events(self, event):
-
         # Kontrollige nuppe
         self.start_button.handle_events(event)
         self.quit_button.handle_events(event)
+
     # Nuppude paigutamine ekraanile
     def render(self, screen):
         screen.fill(self.BACKGROUND_COLOR)
@@ -60,15 +60,16 @@ class WinMenu(Scene):
         # Kontrollige nuppe
         self.restart_button.handle_events(event)
         self.quit_button.handle_events(event)
+
     # Nuppude paigutamine ekraanile
     def render(self, screen):
         screen.fill(self.BACKGROUND_COLOR)
         self.restart_button.render(screen, (
             (screen.get_width() - self.restart_button.get_width()) / 2,
-            screen.get_height() - self.quit_button.get_height() - self.restart_button.get_height() - 120))  # Paigutame Restart nupu
+            screen.get_height() - self.quit_button.get_height() - self.restart_button.get_height() - 120))
         self.quit_button.render(screen, (
             (screen.get_width() - self.quit_button.get_width()) / 2,
-            screen.get_height() - self.quit_button.get_height() - 110))  # Paigutame Quit nupu
+            screen.get_height() - self.quit_button.get_height() - 110))
         win_text = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 48).render(self.text, True, (152, 191, 161))
         screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, HEIGHT // 4))
 

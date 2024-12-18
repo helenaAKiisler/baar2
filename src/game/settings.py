@@ -1,8 +1,6 @@
-import os
-import pygame
+# Üldised värvid ja seaded mida mängus kasutatakse. Mängu olevat epiltide laadimine
 from os.path import join, abspath, dirname
 from pygame.image import load
-# Üldised värvid ja seaded mida mängus kasutatakse.
 
 # Ekraani seaded
 WIDTH, HEIGHT = 800, 600
@@ -32,6 +30,7 @@ bar_image = load(join(base_path, "background", "baar2.png"))
 player_image = load(join(base_path, "character", "mees", "idle.png"))
 enemy_image = load(join(base_path, "customer", "klient1.png"))
 
+# Laudade, klaside ja vaenlaste algasukohad.
 predefined_table_positions = [
             (466, 536), (272, 226), (272, 381), (466, 381), (272, 536),
             (466, 226), (80, 472), (80, 322), (80, 170), (664, 320)

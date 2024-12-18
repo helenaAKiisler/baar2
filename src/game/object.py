@@ -36,7 +36,7 @@ class Glass(Object):
 
 
 class Enemy(pygame.sprite.Sprite):
-    BASE_SPEED = 2  # Muudame kiiruselõigu, et liikumine oleks sujuvam
+    BASE_SPEED = 2  # Vastase kiirus
 
     def __init__(self, x, y, image, tables):
         super().__init__()
@@ -45,7 +45,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.x = x
         self.rect.y = y
-        self.paused = False  # Lisame pausiseisundi atribuudi
+        self.paused = False
         self.direction2 = "right"
 
         # Liikumise algsuund (paremale)
@@ -53,7 +53,6 @@ class Enemy(pygame.sprite.Sprite):
         self.tables = tables  # Lauad, millega vaenlane võib kokkupõrked teha
 
     def update(self):
-        """Vaenlase liikumine ühesuunaliselt (näiteks paremale või vasakule)."""
         if self.paused:
             return  # Peatame liikumise, kui mäng on pausil
 

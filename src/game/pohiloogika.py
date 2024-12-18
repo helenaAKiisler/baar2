@@ -12,7 +12,7 @@ class Game:
 
     def start_game(self):
         """Algatab mängu ajastamise ja muud mängu algseaded."""
-        self.game_timer = GameTimer()  # Alustame mängu ajamõõdikut
+        self.game_timer = GameTimer()
         self.is_paused = False
 
     def toggle_pause(self):

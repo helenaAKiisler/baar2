@@ -1,3 +1,4 @@
+# Kirjeldab ära game leveli ja tutorial leveli loomise klassid
 import pygame
 import os
 import random
@@ -10,8 +11,9 @@ from scene import Scene
 from settings import table_image, enemy_image, bar_image, player_image, background_image, base_path, predefined_table_positions, predefined_enemy_positions, glass_types
 from settings import WIDTH, HEIGHT, BLACK
 
-class GameLevel(Scene):
 
+class GameLevel(Scene):
+    """Loob mängu leveli"""
     def __init__(self, scene_switcher, screen, level=1):
         super().__init__(scene_switcher)
         self.screen = screen
@@ -51,7 +53,7 @@ class GameLevel(Scene):
         self.is_paused = False
         self.game_timer = GameTimer()
 
-        self.time_up = False  # Lisame oleku, et jälgida, kas aeg on otsas
+        self.time_up = False
 
         #Nupud
         self.restart_button = ui.Button("Try_Again", on_pressed=self.restart_level)
@@ -84,7 +86,6 @@ class GameLevel(Scene):
 
             # Paigutame klaasid täpselt laua keskpunkti ümber, et need ei ulatuks laua piiridest välja
             for i in range(2):
-                # Iga klaasi paigutamine erinevatesse kohtadesse laua ümber
                 if i == 0:
                     # Esimene klaas paigutatakse laua vasakule küljele
                     x_offset = table_centerx - 25
@@ -102,7 +103,7 @@ class GameLevel(Scene):
                     self.glasses.add(glass)
                     self.sprites.add(glass)
 
-        # Lisame vaenlased, tagame, et nad ei saa tekkida lauadele
+        # Lisame vaenlased, tagame, et nad ei tekiks laudadele
         for a in range(enemy_count):
             enemy_x, enemy_y = predefined_enemy_positions[a]
             enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
@@ -125,7 +126,7 @@ class GameLevel(Scene):
             return
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:  # Kui vajutatakse Q nuppu, siis viige tagasi MainMenu
+            if event.key == pygame.K_q:
                 self.scene_switcher("MainMenu", self.screen)
             elif event.key == pygame.K_x:  # Klaasi korjamine
                 self.pick_up_glass()
@@ -137,7 +138,7 @@ class GameLevel(Scene):
                 place_glass_sound.play()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.pause_button.rect.collidepoint(event.pos):  # Pause button clicked
+            if self.pause_button.rect.collidepoint(event.pos):
                 self.pause_game()
             if self.waiting_to_place_glasses and event.button == 1:
                 self.place_glasses_in_bar()
@@ -161,7 +162,7 @@ class GameLevel(Scene):
         # Kuvame taustapildi mitmekordistamise, et katta kogu ekraan
         for x in range(0, WIDTH, self.background_image.get_width()):
             for y in range(0, HEIGHT, self.background_image.get_height()):
-                screen.blit(self.background_image, (x, y))  # Taust kuvatakse mitmekordselt üle ekraani
+                screen.blit(self.background_image, (x, y))
 
         # Tumeda ala lisamine punktide ja progress bar'i taustaks
         dark_area_height = 50
@@ -171,7 +172,7 @@ class GameLevel(Scene):
         ui.draw_score(screen, pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20), self.score)
         self.game_timer.draw_progress_bar(screen)
 
-        # Kuvame leveli numbri progressiriba kõrvale paremale mustale alale
+        # Kuvame leveli numbri progressiriba kõrvale mustale alale
         font = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20)
         level_text = font.render(f"Level: {self.level}", True, (180, 212, 187))
         screen.blit(level_text, (410, 0))  # Positsioon: progressiriba kõrvale paremale
@@ -217,7 +218,8 @@ class GameLevel(Scene):
             self.pause_button.render(screen, pause_button_position)
 
     def restart_level(self):
-        self.scene_switcher("GameLevel", self.screen)  # Vahetab stseeni tagasi GameLevel'iks
+        """Vahetab stseeni tagasi GameLevel'iks"""
+        self.scene_switcher("GameLevel", self.screen)
 
     def quit_game(self):
         self.scene_switcher("MainMenu", self.screen)
@@ -325,7 +327,9 @@ class GameLevel(Scene):
             else:
                 self.scene_switcher("WinMenu", self.screen)
 
+
 class TutorialLevel(GameLevel):
+    """Loob tutorial leveli."""
     def __init__(self, scene_switcher, screen, ):
         super().__init__(scene_switcher, screen)
         self.score = 0
@@ -414,19 +418,17 @@ class TutorialLevel(GameLevel):
                     self.glasses.add(glass)
                     self.sprites.add(glass)
 
-        # Lisame vaenlased, tagame, et nad ei saa tekkida lauadele
+        # Lisame vaenlase j akontrollime, et nad ei tekiks laudadele.
         for a in range(enemy_count):
             enemy_x, enemy_y = predefined_enemy_positions[a]
             enemy = Enemy(enemy_x, enemy_y, enemy_image, self.tables)
             self.enemies.add(enemy)
             self.sprites.add(enemy)
 
-
     def skip_tutorial(self):
         self.scene_switcher("GameLevel", self.screen, level=1)
 
     def render(self, screen):
-        # Taustapildi kordamine, et katta kogu ekraan nagu tavalises levelis
         for x in range(0, WIDTH, self.background_image.get_width()):
             for y in range(0, HEIGHT, self.background_image.get_height()):
                 screen.blit(self.background_image, (x, y))
@@ -434,7 +436,7 @@ class TutorialLevel(GameLevel):
         # Must ala progressiriba ja punktide jaoks
         pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, 50))
 
-        # Kuvame punktid ja "Tutorial Level" teksti progressiriba kõrval
+        # Kuvame punktid ja "Tutorial Level" teksti progressiriba kõrvale
         font = pygame.font.Font("../../assets/font/InknutAntiqua-Regular.ttf", 20)
         points_text = font.render(f"Points: {self.score}", True, (180, 212, 187))
         tutorial_text = font.render("Tutorial Level", True, (180, 212, 187))
@@ -452,5 +454,5 @@ class TutorialLevel(GameLevel):
             text_surface = font.render(text, True, (26, 35, 29))
             screen.blit(text_surface, position)
 
-        # Skip nupp paremas ülanurgas, veidi rohkem paremale nihutatud
+        # Skip nupp paremas ülanurgas
         self.skip_button.render(screen, (WIDTH - 130, 5))

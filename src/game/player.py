@@ -52,7 +52,7 @@ class Player(pygame.sprite.Sprite):
         # Kontrollime, kas mängija puutub kokku baariga
         if self.rect.colliderect(self.bar.rect):
             # Kui mängija liigub baari taha altpoolt, piirame liikumist
-            if self.rect.top < self.bar.rect.bottom and move_y < 0:  # Ei saa minna baari taha alt
+            if self.rect.top < self.bar.rect.bottom and move_y < 0:
                 self.rect.top = self.bar.rect.bottom
 
         # Kontrollib kokkupõrkeid iga lauaga ja tühistab liikumise, kui on kokkupõrge
@@ -77,7 +77,3 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-
-#    pygame.draw.circle(screen, (0, 0, 255), (player_x, player_y), 50)
-
-#    pygame.display.flip()

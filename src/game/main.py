@@ -13,6 +13,7 @@
 # Lisakommentaar (nt käivitusjuhend)
 # Mängu käivitamiseks tuleb käivitada main.py. Mängija liikumiseks kasuta klaviatuuril nooleklahve või WASD klahvikombinatsioone.
 # Nuppudele vajutamine toimub vasaku hiireklahviga. Vajutades klahvi P läheb mäng pausile.
+# Klaase saab korjata vajutades X ja klaase saab maha panna baari juures SPACE klahviga.
 ##################################################
 import pygame
 import sys
@@ -32,9 +33,8 @@ game = Game()
 game.start_game()
 current_scene: Scene
 
-# Game initialization
+# Mängu initseerimine
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # Loome screen objekti
-
 
 #Lisame muusika
 pygame.mixer.music.load("../../assets/sfx/menu.mp3")

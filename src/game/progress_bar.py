@@ -15,20 +15,19 @@ class GameTimer:
     # Lülitab pausi sisse ja välja.
     def toggle_pause(self):
         if self.paused:
-            self.resume()  # Kui paus lõppeb, jätkame täitumist
+            self.resume()
         else:
-            self.pause()  # Kui paus algab, peatame täitumise
+            self.pause()
 
     # Peatab ajamõõdiku täitumise.
     def pause(self):
         if not self.paused:
             self.paused = True
-            self.pause_start = time.time()  # Salvestame pausi algusaja
-            self.time_at_pause = self.get_time_left()  # Salvestame järelejäänud aja
+            self.pause_start = time.time()
+            self.time_at_pause = self.get_time_left()
 
     # Taaskäivitab ajamõõdiku täitumise pärast pausi.
     def resume(self):
-        """Taaskäivitab ajamõõdiku täitumise pärast pausi."""
         if self.paused:
             self.paused = False
             self.elapsed_paused_time += time.time() - self.pause_start
@@ -38,7 +37,7 @@ class GameTimer:
     # Arvutab jäänud aja, võttes arvesse pausi kestust.
     def get_time_left(self):
         if self.paused:
-            return self.time_at_pause  # Kui pausil, tagastame salvestatud aja
+            return self.time_at_pause
         return max(0, GAME_DURATION - (time.time() - self.start_time - self.elapsed_paused_time))
 
     # Kontrollib, kas aeg on läbi.
@@ -48,7 +47,7 @@ class GameTimer:
     # Arvutab aja muutuse viimase ja praeguse hetke vahel sekundites.
     def get_delta_time(self):
         if self.paused:
-            return 0  # Kui paus on, ei liigu aeg edasi
+            return 0
         current_time = pygame.time.get_ticks()
         delta = (current_time - self.last_time) / 1000  # Sekundites
         self.last_time = current_time

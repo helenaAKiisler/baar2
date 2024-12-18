@@ -1,12 +1,8 @@
 # Fonti initseerimine ja nuppude klass, mis sätestab ära erinevad nupud mängus.
-
 import pygame
 from settings import button_path, OFF_WHITE
-from os import listdir
 from os.path import isfile, join
 from typing import Callable
-
-
 
 class Button(pygame.Surface):
     def __init__(self, button, on_pressed: Callable):
@@ -39,9 +35,9 @@ class Button(pygame.Surface):
     def handle_events(self, event):
         """Kontrollib, kas nupp on vajutatud."""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):  # Kui hiir on nupu peal ja nupp on vajutatud
+            if self.rect.collidepoint(event.pos):
                 if self.on_pressed:
-                    self.on_pressed()  # Kutsub välja nuppudele määratud tegevuse
+                    self.on_pressed()
 
 def draw_score(screen, font, score):
     score_text = font.render(f"Points: {score}", True, OFF_WHITE)
