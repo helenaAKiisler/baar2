@@ -233,7 +233,6 @@ class GameLevel(Scene):
             expanded_rect = self.player.rect.inflate(50, 50)  # Suurendame mängija rect-i, et hõlbustada korjamist
             for glass in self.glasses:
                 if expanded_rect.colliderect(glass.rect):
-                    print(f"Kokkupõrge tuvastatud klaasiga asukohas: {glass.rect}")
                     self.carried_glasses += 1
                     self.collected_glasses.append(glass)
                     self.glasses.remove(glass)  # Eemaldame klaasi klaaside grupist
@@ -270,7 +269,6 @@ class GameLevel(Scene):
         # Lisame punktid
         for glass in self.collected_glasses:
             self.score += glass.points
-            print(f"Punktid lisatud: {glass.points}")
 
         # Tühjendame mängija korjatud klaaside loendi
         self.carried_glasses = 0
@@ -332,7 +330,6 @@ class GameLevel(Scene):
             else:
                 self.scene_switcher("WinMenu", self.screen)
 
-
 class TutorialLevel(GameLevel):
     """Loob tutorial leveli."""
     def __init__(self, scene_switcher, screen, ):
@@ -363,15 +360,13 @@ class TutorialLevel(GameLevel):
         self.bar = Bar(256,50, 288, 96, self.bar_image)
         self.player = Player(WIDTH // 2, 400, self.player_image, self.bar)
 
-        # Klaasi paigutamine täpselt laua keskele
-
-
         # Kas mängija kannab klaasi
         self.is_carrying_glass = False
 
         # Skip nupp
         self.skip_button = ui.Button("Skip", on_pressed=self.skip_tutorial)
 
+        # Juhised mängijale
         self.tutorial_texts = [
             ("Use arrow keys or WASD to move.", (20, HEIGHT - 180)),
             ("Press X to pick up glasses.", (20, HEIGHT - 150)),
