@@ -55,7 +55,7 @@ def scene_switcher(new_scene_name, screen=None, level=1):
         current_scene = TutorialLevel(scene_switcher, screen=screen)
         pygame.mixer.music.load("../../assets/sfx/tutorial.mp3")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.set_volume(0.1)
     elif new_scene_name == "GameLevel":
         pygame.mixer.music.load("../../assets/sfx/background.mp3")
         pygame.mixer.music.play(-1)
