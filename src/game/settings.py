@@ -26,7 +26,7 @@ background_image = load(join(base_path, "background", "floor.png"))
 table_image = load(join(base_path, "table", "table2.png"))
 bar_image = load(join(base_path, "background", "baar2.png"))
 player_image = load(join(base_path, "character", "mees", "idle.png"))
-enemy_image = load(join(base_path, "customer", "klient1.png"))
+enemy_image = load(join(base_path, "customer", "naine", "idle.png"))
 
 # Laudade, klaaside ja vaenlaste algasukohad.
 predefined_table_positions = [
