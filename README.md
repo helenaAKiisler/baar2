@@ -1,2 +1,2 @@
-# Baar2
-Siia Githubi repositooriumisse koondame kõik mängu jaoks loodud koodijupid ning samuti disainid. Mängu disainide ning erinevate koodi osade jaoks loome eraldi kaustad. Disainid võiks olla salvestatud PNG formaadis.
+# Game Baar2
+A simple 2D pixelated Bar simulator where the player has to avoid obstacles and collect glasses from tables returning them to the bar.
